@@ -148,16 +148,44 @@ public class LDAPDirectory implements Directory {
             List<Employee> tmp = new ArrayList<Employee>();
             NamingEnumeration<SearchResult> answer = context.search("ou=People", null,
                     new String[]{"uid", "sn", "givenName", "employeeNumber", "fulltime", "active", "mail", "birthdate"});
+            int employeeCount = 0;
             while (answer.hasMore()) {
                 Attributes attributes = answer.next().getAttributes();
-                String name = attributes.get("sn").getAll().next() + ", " + attributes.get("givenName").getAll().next();
+                
+                String sn = attributes.get("sn").getAll().next().toString();
+                
+                //Need to handle these more elegantly
+                if ( sn.equals("nobody") || sn.equals("dignitas") || sn.equals( "root" ) )
+                {
+                    continue;
+                }
+                
+                //For debugging
+                //if( sn.equals( "root" ) )
+                //{
+                //    DateMidnight birthdate = new DateMidnight("2001-01-01");
+                //    tmp.add( new EmployeeImpl( "root", "root", 26, true, true, "root@dignitastechnologies.com", birthdate ) );
+                //    continue;
+                //}
+
+                String name = sn + ", " + attributes.get("givenName").getAll().next();
                 String uid = attributes.get("uid").getAll().next().toString();
                 String mail = attributes.get("mail").getAll().next().toString();
-                boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
-                boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
-                int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
-                DateMidnight birthdate = new DateMidnight(attributes.get("birthdate").getAll().next().toString());
+                //boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
+                //boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
+                
+                boolean fulltime = true;
+                boolean active = true;
+                
+                //int employeeNumber = Integer.parseInt(attributes.get("employeeNumber").getAll().next().toString());
+                int employeeNumber = ++employeeCount;
+                //DateMidnight birthdate = new DateMidnight(attributes.get("birthdate").getAll().next().toString());
+                DateMidnight birthdate = new DateMidnight("2001-01-01");
+                
                 tmp.add(new EmployeeImpl(name, uid, employeeNumber, fulltime, active, mail, birthdate));
+                
+                System.out.println( "\nName:\t" + name + "\nUID:\t" + uid + "\nNUM:\t" + employeeNumber + "\nMAIL:\t" + mail + "\nBDT:\t" + birthdate + "\n/-/-/-/-/-/-/-/-/-/-\n\n" );
+                        
             }
 
             Collections.sort(tmp, new Comparator<Employee>() {

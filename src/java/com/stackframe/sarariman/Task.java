@@ -85,6 +85,9 @@ public class Task {
                 + "LEFT OUTER JOIN customers AS c ON c.id = p.customer "
                 + "WHERE employee=? AND billable=? AND t.active=TRUE");
         try {
+            if( employee == null )
+                return null;
+                         
             ps.setInt(1, employee.getNumber());
             ps.setBoolean(2, billable);
             ResultSet resultSet = ps.executeQuery();
