@@ -496,13 +496,14 @@
     <env-entry>
         <env-entry-name>java.naming.provider.url</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>ldap://ldap.stackframe.com:389/dc=stackframe,dc=com</env-entry-value>
+        <env-entry-value>ldap://mainframe:389/dc=dignitastechnologies,dc=com</env-entry-value>
     </env-entry>
     <env-entry>
         <env-entry-name>java.naming.security.authentication</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>simple</env-entry-value>
     </env-entry>
+    <!--
     <env-entry>
         <env-entry-name>java.naming.security.principal</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -513,6 +514,7 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>67qwnm</env-entry-value>
     </env-entry>
+    -->
     <env-entry>
         <env-entry-name>mail.smtp.host</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
@@ -536,7 +538,7 @@
     <env-entry>
         <env-entry-name>inhibitEmail</env-entry-name>
         <env-entry-type>java.lang.Boolean</env-entry-type>
-        <env-entry-value>false</env-entry-value>
+        <env-entry-value>true</env-entry-value>
     </env-entry>
     <resource-ref>
         <description>DB Connection</description>

@@ -17,11 +17,35 @@
         <link href="style.css" rel="stylesheet" type="text/css"/>
         <title>Contacts</title>
         <script type="text/javascript" src="utilities.js"/>
+        
+        <!-- YUI DataTable -->
+        <script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js" charset="utf-8" ></script> 
+        
     </head>
     <body onload="altRows()">
         <%@include file="header.jsp" %>
-
+        
         <h1>Contacts</h1>
+        
+        <script type="text/javascript">
+            
+            //Create a new YUI instance with the required modules
+            YUI( ).use( 'datatable', function( Y )
+            { 
+                var columns = [ "name", "title", "phone", "email" ];
+                var rows = [ { name:"Test Name", title:"Test Title", phone:"555-5555", email:"test@test" } ];
+                
+                var table = new Y.DataTable.Base( 
+                {
+                    columnset: columns,
+                    recordset: rows
+                } ).render( "#testDataTable" );
+                
+            } );
+            
+        </script>
+        
+        <h1>Contacts - Old</h1>
 
         <c:url var="createLink" value="contact">
             <c:param name="action" value="create"/>

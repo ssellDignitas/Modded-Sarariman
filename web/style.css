@@ -5,9 +5,12 @@
 
 body {
     margin: 0px auto;
-    padding: 15px;
-    background: white;
-    color: black;
+    padding-top: 15px;
+    padding-left: 150px;
+    background: #161616;
+    color: #FFFFFF;
+    text-align: left;
+    font: normal 12px/1.5em "Lucida Grande", "Verdana", sans-serif;
 }
 
 .error {
@@ -40,7 +43,7 @@ table.altrows {
     font-size:11px;
     color:#333333;
     border-width: 1px;
-    border-color: #a9c6c9;
+    border-color: #3A7695;
     border-collapse: collapse;
 }
 
@@ -48,20 +51,37 @@ table.altrows th {
     border-width: 1px;
     padding: 8px;
     border-style: solid;
-    border-color: #a9c6c9;
+    border-color: #3A7695;
 }
 
 table.altrows td {
     border-width: 1px;
     padding: 8px;
     border-style: solid;
-    border-color: #a9c6c9;
+    border-color: #3A7695;
 }
 
 .oddrow {
-    background-color: #d4e3e5;
+    background-color: #FFFFFF;
 }
 
 .evenrow {
-    background-color: #c3dde0;
+    background-color: #C9ECFF;
 }
+
+a {}
+	a{
+		text-align: left;
+		color: #6ebae2;		
+	}
+	
+	a:hover {
+		text-align: left;
+		color: #C8C8C8;
+	}
+	
+	a:visited{
+        text-align: left;
+        color: #3A7695;
+    }
+

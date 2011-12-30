@@ -53,7 +53,6 @@
                 <li><a href="expenses">Expenses</a></li>
             </c:if>
         </ul>
-
         <%@include file="footer.jsp" %>
     </body>
 </html>

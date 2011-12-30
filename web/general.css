@@ -1,0 +1,426 @@
+body 
+{
+    margin:50px 0px; 
+    margin-top:0px;
+    padding:0px;
+    font: normal 12px/1.5em "Lucida Grande", "Verdana", sans-serif;
+    background: #FFF url(images/bg.jpg) repeat;
+    color: #0f0f10;
+}
+
+.list_pad
+{
+    padding-left:10px;
+}
+
+/* ------------------------ Text Styling ------------------------------------------------ */
+
+h1{
+    font:3.5em Georgia,sans-serif;
+    color: #2A2C2B;
+
+    text-shadow:
+        -2px -2px 0 #FFF,
+        2px -2px 0 #FFF,
+        -2px 2px 0 #FFF,
+        2px 2px 0 #FFF;
+}
+
+h2{
+    font:1.5em Georgia,sans-serif;
+    color: #000;
+
+    text-shadow:
+        -1px -1px 0 #FBFBFB,
+        1px -1px 0 #FBFBFB,
+        -1px 1px 0 #FBFBFB,
+        1px 1px 0 #FBFBFB;
+
+    padding-left: 30px;
+}
+
+p
+{    
+    font: normal 15px "Lucida Grande", "Verdana", sans-serif;
+
+    padding-left:10px;
+    padding-right:10px;
+    padding-bottom:10px;
+}
+
+p.big
+{
+    font: normal 18px "Lucida Grande", "Verdana", sans-serif;
+}
+
+p.small
+{
+    font: normal 12px, "Lucida Grande", "Verdana", sans-serif;
+    color: #808080;
+}
+
+a {}
+a{
+    text-align: left;
+    color: #6ebae2;	
+    text-decoration:none;
+}
+
+a:hover {
+    text-align: left;
+    color: #C8C8C8;
+}
+
+a:visited{
+    text-align: left;
+    color: #6ebae2;
+}
+
+/* ------------------------ Sticky Footer --------------------------------------------------- */
+
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -4em;
+}
+.footer_stick, .push {
+    height: 4em;
+}
+
+/* ------------------------ BODY -------------------------------------------------------- */
+
+#body
+{    
+    width: 100%;
+    min-height: 600px;
+    height: auto;
+
+    margin: 0 auto;
+
+    background: #FBFBFB;
+
+    font-size: 100%;
+    color: #1E1E20;
+
+    top: 0px;
+    right: 50%;
+
+    overflow:auto; 
+
+    border: 3px solid #FFF;
+}
+
+.stripe_back{ background-image: url( "images/back_stripe.png" ); }
+
+/* ------------------------ FOOTER ------------------------------------------------------ */
+
+#footer
+{
+    font-size: 90%;
+    color: #2A2C2B;
+
+    width: 100%;
+    height: 30px;
+    margin:0px auto;
+
+    bottom: 0px;
+}
+
+/* ------------------------ HEADER ------------------------------------------------------ */
+
+#header {
+    background:  #2A2C2B;
+    padding-top: 0px;
+    font-size: 90%;
+}
+#header .disclaimer {
+    color: #1E1E20;
+    padding: 0px 0 7px 0;
+    text-align: right;
+    display: block;
+    position: absolute;
+    top: 0; right: 0;
+}
+#header .disclaimer a {	color: #ccc;}
+ul.topnav {
+    list-style: none;
+    padding: 0;	
+    margin: 0;
+    float: left;
+    width: 100%;
+
+    font-size: 1.2em;
+
+    background: #2A2C2B;
+
+    border-bottom: 3px solid #FFF;
+}
+ul.topnav li {
+    float: left;
+    margin: 0;	
+    padding: 0 15px 0 0;
+    position: relative; /*--Declare X and Y axis base--*/
+}
+ul.topnav li a{
+    padding: 10px 5px;
+    color: #fff;
+    display: block;
+    text-decoration: none;
+    float: left;
+}
+ul.topnav li a:hover{
+    background: #374140;
+}
+ul.topnav li span { /*--Drop down trigger styles--*/
+    width: 17px;
+    height: 35px;
+    float: left;
+    background: url(images/sub_nav.png) no-repeat center top;
+}
+ul.topnav li span.subhover {background-position: center bottom; cursor: pointer;} /*--Hover effect for trigger--*/
+ul.topnav li ul.subnav {
+    list-style: none;
+    position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
+    left: 0; top: 35px;
+    background: #374140;
+    margin: 0; padding: 0;
+    display: none;
+    float: left;
+    width: 170px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    border: 1px solid #111;
+}
+ul.topnav li ul.subnav li{
+    margin: 0; padding: 0;
+    border-top: 1px solid #2A2C2B; /*--Create bevel effect--*/
+    border-bottom: 1px solid #444; /*--Create bevel effect--*/
+    clear: both;
+    width: 170px;
+}
+html ul.topnav li ul.subnav li a {
+    float: left;
+    width: 145px;
+    background: #2A2C2B;
+    padding-left: 20px;
+}
+html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+    background: #374140; 
+}
+#header img {
+    margin: 20px 0 10px;
+}
+
+/* ------------------------ SHADOW ------------------------------------------------------- */
+
+.drop-shadow {
+
+    padding:1em; 
+    position:relative;
+    float:left;
+    width:95%;
+    margin:2em 20px 4em;
+
+    overflow:auto;
+
+    -webkit-box-shadow: 0px 3px 8px 2px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 3px 8px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 3px 8px 2px rgba(0, 0, 0, 0.3);
+
+    background:#FBFBFB;
+
+    border: 3px solid #FFF;
+}
+
+.drop-shadow_indexSpecial
+{
+    position:relative;
+    float:left;
+    width:40%; 
+
+    overflow:auto;
+
+    padding:1.5em; 
+    margin:2em 4.25em 4em; 
+    background:#FBFBFB;
+    -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+    box-shadow:0 1px 4px rgba(0, 0, 0, 0.3);
+
+    border: 3px solid #FFF;
+}
+
+.drop-shadow:before,
+.drop-shadow:after {
+    content:"";
+    position:absolute; 
+    z-index:-2;
+}
+
+/* Curved shadows */
+
+.curved:before {
+    top:10px;
+    bottom:10px;
+    left:0;
+    right:50%;
+    -webkit-box-shadow:0 0 15px rgba(0,0,0,0.6);
+    -moz-box-shadow:0 0 15px rgba(0,0,0,0.6);
+    box-shadow:0 0 15px rgba(0,0,0,0.6);
+    -moz-border-radius:10px / 100px;
+    border-radius:10px / 100px;
+}
+
+.curved-hz-2:before {
+    top:10px;
+    bottom:10px;
+    left:10px;
+    right:10px;
+    -moz-border-radius:100px / 10px;
+    border-radius:100px / 10px;
+}
+
+/*-------------- Misc ---------------------------------------------------------------- */
+
+.message
+{
+    padding-left:150px;
+}
+
+#holder
+{
+
+    height: auto;
+    width: 90%;
+    margin:0px auto;
+
+    overflow:auto;
+
+    margin:auto;
+}
+
+/*---------------- Tabs --------------------------------------------------------------*/
+
+/* root element for tabs  */
+ul.tabs { 
+	list-style:none; 
+	margin:0 !important; 
+	padding:0;	
+	height:30px;
+}
+
+/* single tab */
+ul.tabs li { 
+	float:left;	 
+	text-indent:0;
+	padding:0;
+	margin:0 !important;
+	list-style-image:none !important; 
+}
+
+/* link inside the tab. uses a background image */
+ul.tabs a { 
+	background: url(images/tabs_back.png) no-repeat -420px 0;
+    
+	font-size:11px;
+	display:block;
+    
+	height: 30px;  
+	line-height:30px;
+	width: 134px;
+    
+	text-align:center;	
+	text-decoration:none;
+    
+	color:#2A2C2B;
+	padding:0px;
+	margin:0 0 0;
+	position:relative;
+	top:1px;
+    
+    -webkit-box-shadow: 0px 6px 8px 2px rgba(0, 0, 0, 0.3);
+       -moz-box-shadow: 0px 6px 8px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 6px 8px 2px rgba(0, 0, 0, 0.3);
+            
+    background:#FFF;
+
+    border: 3px solid #FFF;
+}
+
+ul.tabs a:active {
+	outline:none;		
+}
+
+/* when mouse enters the tab move the background image */
+ul.tabs a:hover {
+
+    background:#FBFBFB;	
+    color:#000;	
+    border-bottom: 3px solid #FBFBFB;
+}
+
+/* active tab uses a class name "current". its highlight is also done by moving the background image. */
+ul.tabs a.current, ul.tabs a.current:hover, ul.tabs li.current a {
+	cursor:default !important;
+    background:#FBFBFB;	
+    color:#000;	
+    border-bottom: 3px solid #FBFBFB;
+}
+
+/* Different widths for tabs: use a class name: w1, w2, w3 or w2 */
+
+
+/* width 1 */
+ul.tabs a.s 			{ background-position: -553px 0; width:81px; }
+ul.tabs a.s:hover 	{ background-position: -553px -31px; }
+ul.tabs a.s.current  { background-position: -553px -62px; }
+
+/* width 2 */
+ul.tabs a.l 			{ background-position: -248px -0px; width:174px; }
+ul.tabs a.l:hover 	{ background-position: -248px -31px; }
+ul.tabs a.l.current  { background-position: -248px -62px; }
+
+
+/* width 3 */
+ul.tabs a.xl 			{ background-position: 0 -0px; width:248px; }
+ul.tabs a.xl:hover 	{ background-position: 0 -31px; }
+ul.tabs a.xl.current { background-position: 0 -62px; }
+
+
+/* initially all panes are hidden */ 
+.panes .pane {
+	display:none;		
+}
+
+.panes > div {
+    
+    padding:1em;
+    
+	position:relative;
+    float:left;
+    width:95%;
+    
+    min-height:200px;
+
+    overflow:auto;
+    
+    margin:0 10px 4em;
+
+    -webkit-box-shadow: 0px 6px 8px 2px rgba(0, 0, 0, 0.3);
+       -moz-box-shadow: 0px 6px 8px 2px rgba(0, 0, 0, 0.3);
+            box-shadow: 0px 6px 8px 2px rgba(0, 0, 0, 0.3);
+
+    background:#FBFBFB;
+
+    border: 3px solid #FFF;
+    border-top:0px;
+}

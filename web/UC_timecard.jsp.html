@@ -1,0 +1,258 @@
+<%-- 
+    Document   : UC_timecard
+    Created on : Jun 9, 2011, 4:21:20 PM
+    Author     : root
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
+<%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<c:set var="employeeNumber" value="${user.number}"/>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <title>Sarariman : Time Tracking Service</title>
+
+            <!-- Scripts -->
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+            <script type="text/javascript" src="http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js"></script>
+            <script type="text/javascript" src="scripts/main_nav.js"></script> 
+            <script type="text/javascript" src="scripts/jQ_tabs.js"></script>
+            <script type="text/javascript" src="scripts/jFormer.js"></script>
+
+            <!-- Styles -->
+            <link type="text/css" rel="stylesheet" href="styles/general.css" />
+            <link type="text/css" rel="stylesheet" href="styles/jformer.css" />
+
+            <style type="text/css">
+
+                div.reset, div.reset > *
+                {
+                    border:none!important;
+                    margin:0 !important;
+                    padding:0 !important;
+
+                    -webkit-box-shadow:none!important;
+                    -moz-box-shadow:none!important;
+                    box-shadow:none!important;
+                }
+
+            </style>
+
+    </head>
+    <body>
+
+        <c:choose>
+            <c:when test="${!empty param.week}">
+                <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="week" value="${du:weekStart(du:now())}"/>
+            </c:otherwise>
+        </c:choose>
+
+        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employeeNumber, week)}"/>
+        <c:set var="submitted" value="${timesheet.submitted}"/>
+
+        <c:if test="${!submitted && param.submit}">
+            <c:set var="submitted" value="${sarariman:submitTimesheet(timesheet)}"/>
+        </c:if>
+
+        <div id="header">
+            <!-- Main Navigation Pane -->
+            <%@include file="UC_header.jsp" %>
+        </div>
+
+        <div class="wrapper">
+            <div class="message">
+                <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
+                <h1><br><br>${user.fullName}'s TimeSheet for the Week of <a href="#">${thisWeekStart}</a></h1>
+            </div>
+            <br><br>
+    <div id="holder">
+
+        <!-- tabs -->
+        <div style="margin:0 10px 0;">
+            <ul class="tabs">
+                <li>
+                    <a href="#sat" class="l">Saturday</a>
+                </li>
+                <li>
+                    <a href="#sun" class="l">Sunday</a>
+                </li>
+                <li>
+                    <a href="#mon" class="l">Monday</a>
+                </li>
+                <li>
+                    <a href="#tue" class="l">Tuesday</a>
+                </li>
+                <li>
+                    <a href="#wed" class="l">Wednesday</a>
+                </li>
+                <li>
+                    <a href="#thu" class="l">Thursday</a>
+                </li>
+                <li>
+                    <a href="#fri" class="l">Friday</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- panes -->
+
+        <div class="panes curved curved-hz-2">
+
+            <div>        
+                
+                <?php
+                
+                    require_once('php/jformer.php');
+     
+    //------------------------------------------------------------------------------------------
+    // Create a new JFormer Form
+     
+    $timeForm = new JFormer( 'timeForm', array(
+            'submitTimeButton' => 'Submit Time',
+            'style' => 'width: 650px;',
+            'title' => '<h2>TimeSheet Form</h2>',
+            'description' => '<p class="small">Fill out all mandatory fields and submit your TimeSheet every day.</p>'
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Create the left-hand-side
+     
+    $chargeHoursSection = new JFormSection( $timeForm->id.'ChargeHours', array(
+            'title' => '<p class="big">Time Details</p>',
+            'instanceOptions' => array(
+                    'max' => 256,
+                    'addChargeButtonText' => 'Add New Charge',
+                    'removeChargeButtonText' => 'Remove Charge',
+            )
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Create the right-hand-side
+     
+    $descriptionSection = JFormSection( $timeForm->id.'Description', array(
+            'title' => '<p class="big">Description</p>'
+            )
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Add components to LHS
+     
+    $chargeHoursSection->addJFormComponentArray( array(
+     
+            new JFormComponentDropDown( 'chargeNumber', 'Charge:',
+                    array(
+     
+                            array(
+                                    'value' => ' ',
+                                    'label' => ' - Select a Charge - ',
+                                    'disabled' => true,
+                                    'selected' => true
+                            ),
+     
+                            array(
+                                    'value' => 'option1',
+                                    'label' => 'Option 1'
+                            ),
+                    ),
+     
+                    array(
+                            'tip' => '<p class="small">Select a charge number. Additional charges may be added.</p>',
+                    ),
+     
+                    'validationOptions' => array( 'required' ),
+            ),
+     
+            new JFormComponentSingleLineText( 'hours', 'Hour Count:', array(
+                    'width' => 'long',
+                    'validationOptions' => array( 'required' ),
+            ) ),
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Add components to RHS
+     
+    $descriptionSection->addJFormComponentArray( array(
+     
+            new JFormComponentTextArea( 'description', 'Description of Time Worked:', array(
+                    'width' => 'longest',
+                    'height' => 'medium',
+                    'validationOptions' => array( 'required' ),
+            ) ),
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Add the sections to the page
+     
+    $timeForm->addJFormSection( $chargeHoursSection );
+    $timeForm->addJFormSection( $descriptionSection );
+     
+    $timeForm->processRequest( );
+
+    ?>
+            </div>
+
+
+            <div>
+                sunday
+            </div>
+
+
+            <div>
+                mon
+            </div>
+
+
+            <div>
+                tue
+            </div>
+
+
+            <div>
+                wed
+            </div>
+
+
+            <div>
+                thu
+            </div>
+
+
+            <div>
+                fri
+            </div>
+        </div>                
+    </div>
+
+    <div class="message"><h1><br />Week Summary</h1></div>
+
+    <div id="holder">
+        <div class="drop-shadow curved curved-hz-2">
+
+            Quick-glance week hours overview as well as time left in budgeted/goal hours
+
+        </div>
+
+    </div>
+
+    </div>
+
+
+    <div class="push"></div>
+    </div>
+    <div class="footer_stick">
+        <div class="footer">
+            <%@include file="UC_footer.jsp" %>
+        </div>
+    </div>
+
+    </body>
+    </html>

@@ -20,7 +20,7 @@
 
         <h1>Invoice Managers</h1>
 
-        <c:set var="isAdministrator" value="${user.administrator}"/>
+        <c:set var="isAdministrator" value="${user.administrator}"/>zz
 
         <%
         Directory directory = (Directory)getServletContext().getAttribute("directory");

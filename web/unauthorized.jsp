@@ -3,23 +3,52 @@
   This code is licensed under GPLv2.
 --%>
 
-<%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!DOCTYPE html>
+<html>
     <head>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
-        <title>Unauthorized</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Sarariman : Time Tracking Service</title>
+
+        <!-- Scripts -->
+        <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+        <script type="text/javascript" src="scripts/main_nav.js"></script> 
+
+        <!-- Styles -->
+        <link type="text/css" rel="stylesheet" href="styles/general.css" />
+
     </head>
-
     <body>
-        <%@include file="header.jsp" %>
 
-        <p>Sorry, you are not authorized to view the requested page.</p>
+        <div id="container">
 
-        <%@include file="footer.jsp" %>
+            <div id="header">
+                <!-- Main Navigation Pane -->
+                <%@include file="UC_header.jsp" %>
+            </div>
+
+            <div id="body">
+                
+                <h1>401 - Not Authorized</h1>
+                
+                <p>
+                    You do not have the proper permissions to view this page.
+                </p>
+                
+                <br><br>
+                
+            </div>
+
+            <div id="footer">
+                <%@include file="UC_footer.jsp" %>
+            </div>
+
+        </div>
+
     </body>
 </html>
