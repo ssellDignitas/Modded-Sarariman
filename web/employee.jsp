@@ -28,7 +28,7 @@
     <c:set var="employee" value="${directory.byNumber[param.id]}"/>
     
     <head>
-        <link href="style.css" rel="stylesheet" type="text/css"/>
+        <link type="text/css" rel="stylesheet" href="styles/general.css" />  
         <title>Details of ${employee.fullName}</title>
         
         <!-- Scripts -->
@@ -60,31 +60,31 @@
         
         <!-- Set var for later use -->
         <c:set var="isAdministrator" value="${user.administrator}"/>
-        
-        <div id="container">
 
-            <div id="header">
-                <!-- Main Navigation Pane -->
-                <%@include file="UC_header.jsp" %>
+        <div id="header">
+            <!-- Main Navigation Pane -->
+            <%@include file="UC_header.jsp" %>
+        </div>
+
+        <div class="wrapper">
+            <!-- Body Segment -->
+            <div class="message">
+                <!-- Body Segment -->   
+                    <h1><br><br>${employee.fullName}</h1>
+                    <a href="employees.jsp">Back to Employee List</a><br />
             </div>
-
-            <div id="body">
-                <!-- Body Segment -->                
-                <p>
-                    
-                    <a href="employees.jsp">Back to Employee List</a>
-                    
-                    <h1>${employee.fullName}</h1>
-                    
-                    <c:if test="${user.administrator}">
+                    <p>
+                    <div id="holder">
+                                        <div class="drop-shadow curved curved-hz-2">
+                                            <c:if test="${user.administrator}">
                         
                         <h2>Info</h2>
-                        <div id="list_pad">
+                        <div id="list_pad"><br>
                         Birthdate: <joda:format value="${directory.byNumber[param.id].birthdate}" style="L-" /><br/>
                         Age: ${directory.byNumber[param.id].age}
                         </div>
                             
-                        <h2>Direct Rate</h2>
+                        <h2><br><br>Direct Rate<br></h2>
                         
                         <sql:query dataSource="jdbc/sarariman" var="resultSet">
                             SELECT rate, effective
@@ -120,7 +120,7 @@
                         <sql:param value="${param.id}"/>
                     </sql:query>
                     <c:if test="${resultSet.rowCount != 0}">
-                        <h2>Projects Managed</h2>
+                        <h2><br><br>Projects Managed<br></h2>
                         <ul>
                             <c:forEach var="mapping_row" items="${resultSet.rows}">
                                 <c:set var="project" value="${sarariman.projects[mapping_row.project]}"/>
@@ -133,7 +133,7 @@
                         </ul>
                     </c:if>
 
-                    <h2>Task Assignments</h2>
+                    <h2><br><br>Task Assignments<br></h2>
                     <div id="list_pad">
                     <form method="POST" action="TaskAssignmentController">
                         <input type="hidden" name="employee" value="${param.id}"/>
@@ -169,7 +169,7 @@
                     </div>
 
                     <c:if test="${user.administrator}">
-                        <div id="list_pad">
+                        <div id="list_pad"><br>
                         <form method="POST" action="TaskAssignmentController">
                             <input type="hidden" name="employee" value="${param.id}"/>
                             <input type="hidden" name="action" value="add"/>
@@ -188,7 +188,7 @@
                         </div>
                     </c:if>
 
-                    <h2>Tasks Worked</h2>
+                    <h2><br><br>Tasks Worked<br></h2>
                     <ul>
                         <sql:query dataSource="jdbc/sarariman" var="resultSet">
                             SELECT DISTINCT(h.task), t.name, t.project
@@ -220,11 +220,15 @@
                                 
             </div>
 
-            <div id="footer">
-                <%@include file="UC_footer.jsp" %>
             </div>
+                                                
+                                                    <div class="push"></div>
+                                                    </div>
+                                                    <div class="footer_stick">
+                                                        <div class="footer">
+                                                            <%@include file="UC_footer.jsp" %>
+                                                        </div>
+                                                    </div>
 
-        </div>
-
-    </body>
-</html>
+                                                    </body>
+                                                    </html>

@@ -1,0 +1,64 @@
+.locked
+{
+    font:1.2em "Lucida Grande", "Verdana", sans-serif;
+    color: #D60100;
+    
+    border-bottom: 1px solid #E1E1E1;    
+}
+
+.locked_message
+{
+    color:#666;
+    font-size:1em;
+    background-image: url( "../images/stripe_back.png" ); 
+    border-bottom: 1px solid #E1E1E1;  
+}
+
+.stripe_back
+{ 
+    background-image: url( "images/stripe_back.png" ); 
+}
+    
+.button
+{
+    background-color: #FFFFFF;
+    background-repeat: no-repeat;
+    background-position: left center;
+        
+    padding-left:17px;
+        
+    border: 1px solid #E1E1E1;
+        
+    min-width: 30px;
+    min-height: 20px;
+}
+    
+.submit
+{
+    background-image: url( "../images/accept.png" );
+}
+    
+.add
+{
+    background-image: url( "../images/add.png" );
+}
+    
+.remove
+{
+    background-image: url( "../images/cancel.png" );
+}
+    
+.currentFormTemplate
+{
+    display:none;
+}
+    
+.currentForm
+{
+    display:none;
+}
+
+.lockedForm
+{
+    display:none;
+}

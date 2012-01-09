@@ -7,7 +7,7 @@ var day = new Date( ).getDay( );
 var count = -1;
 var descHidden = 1;
 var threshold = 0;
-
+var in_current_week = true;
 var days = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri" ];
 var takenValues = new Array( );
 
@@ -17,6 +17,66 @@ var takenValues = new Array( );
 day = day < 6 ? day + 1 : 0;
 
 //------------------------------------------------------------------------------------------
+
+// Checks if the current Timecard displayed is for the current week
+function weekIsCurrent( )
+{
+    var today = new Date( );
+    var dd = today.getDate( );
+    var mm = today.getMonth( ) + 1;
+    var yyyy = today.getFullYear( );
+
+    if( dd < 20 ) 
+        dd = '0' + dd;
+  
+    if( mm < 10 )
+        mm = '0' + mm;
+    
+    // Is today Saturday?
+    if( day != 0 )
+    {
+        // Get what day Saturday was on
+        dd = dd - day;
+
+        // Oops, Saturday was in the previous month
+        if( dd < 1 )
+        {
+            mm = mm -1;
+
+            // Did we go back into the previous year?
+            if( mm == 0 )
+            {
+                mm = 12;
+                yyyy = yyyy - 1;
+            }
+
+            // How many days in the month?
+            if( mm == 1 || mm == 3 || mm == 5 || mm == 7 || mm == 8 || mm == 10 || mm == 12 )
+                dd = 31 - dd;
+            else if( mm == 2 )
+            {
+                // Leap year?
+                if( yyyy % 4 == 0 )
+                    dd = 29 - dd;
+                else
+                    dd = 28 - dd;
+            }
+            else
+                dd = 30 - dd;
+        }
+    }
+
+    // We FINALLY have the date of last saturday
+    var last_sat = yyyy + '-' + mm + '-' + dd;
+
+    // If last_sat is equal to the contents of #week_start then we are in the current week
+    var reported_sat = $( "#week_start" ).html( );
+     
+    if( last_sat != reported_sat )
+        in_current_week = false;
+
+    alert( last_sat + " : " + reported_sat );
+}
 
 // Calculates the totals for the 'total' row.
 // Sums up every column and displays the total.
@@ -132,7 +192,7 @@ function setHeaders( )
     $( '#TimeGrid' ).find( 'thead' ).find( 'tr' ).children( ).each( function( index )
     {
         // index - 1 to account for 'Task Name' being counted
-        if( ( index - 1 ) == day )
+        if( ( index - 1 ) == day && in_current_week )
             $( this ).addClass( 'alternate_header' );
         else
             $( this ).addClass( 'standard_header' );
@@ -158,7 +218,7 @@ function addRow( )
         {
             $( this ).attr( 'id', $( this ).attr( 'id' ) + count );
         } );
-        
+    
         //Enable the field if it is the correct day
         if( ( index - 1 ) == day )
         {
@@ -299,6 +359,7 @@ function removeForms( )
 
 $( document ).ready( function( )
 {
+    weekIsCurrent( );
     bind( );
     
     // Make sure the TimeGrid ID is being used.
@@ -488,18 +549,22 @@ $( document ).ready( function( )
     // For each id containing 'duration'
     $( 'input[id*="duration"]' ).each( function( index )
     {   
-        // If the id contains the current day
-        if( $( this ).attr( 'id' ).indexOf( days[ day ] ) >= 0 )
+        // Are we in current week? (did not go back or forth)
+        if( in_current_week )
         {
-            // And if there is no value in the element
-            if( $( this ).val( ).length  == 0 )
+            // If the id contains the current day
+            if( $( this ).attr( 'id' ).indexOf( days[ day ] ) >= 0 )
             {
-                // This element can be edited freely
-                $( this ).addClass( 'duration_enabled' );
-                return true;               
+                // And if there is no value in the element
+                if( $( this ).val( ).length  == 0 )
+                {
+                    // This element can be edited freely
+                    $( this ).addClass( 'duration_enabled' );
+                    return true;               
+                }
             }
         }
-        
+
         // Otherwise, disable the element
         $( this ).addClass( 'hide_me' );
         
@@ -527,11 +592,14 @@ $( document ).ready( function( )
         }
         
         parent.append( '<a rel="' + overlayToUse + '" class=".' + className +'" style="text-decoration:none"><button type=\"button\" id=\"' + id + '\" class=\"duration_disabled\" style=\"width:85px;height:100%">' + $( this ).val( ) + '</button></a>' );
-    
-        if( $( this ).attr( 'id' ).indexOf( days[ day ] ) >= 0 )
+   
+        if( in_current_week ) 
         {
-            $( '#' + id ).removeClass( 'duration_disabled' );
-            $( '#' + id ).addClass( 'duration_enabled' );
+            if( $( this ).attr( 'id' ).indexOf( days[ day ] ) >= 0 )
+            {
+                $( '#' + id ).removeClass( 'duration_disabled' );
+                $( '#' + id ).addClass( 'duration_enabled' );
+            }
         }
         
         // Fix for Firefox displaying empty buttons with dimensions different from those with text.
@@ -549,7 +617,7 @@ $( document ).ready( function( )
     {
         var reveal = $( this ).parent( ).attr( 'rel' );
         
-        if( reveal === "#overlay" )
+        if( reveal == "#overlay" )
         {
             // The proper edit URL is already calculated and hidden away
             // Need to first construct the id of the span that contains the url.
@@ -574,7 +642,11 @@ $( document ).ready( function( )
             var year = today.getFullYear( );
             var month = today.getMonth( ) + 1;
             var dayy = today.getDate( );
-            
+           
+//
+// bug fix in here (wrong date in overlay for past/future weeks)
+//
+ 
             // Get the correct date for specified cell
             var dayNumber = getCellDay( $( this ).attr( 'id' ) );
             

@@ -1,0 +1,117 @@
+.standard_header
+{
+    color: #444444;
+    font: 1em "Courier New", monospace;
+
+    background-color: #E1E1E1;
+    padding: 3px;
+    border: 1px solid #E1E1E1;
+
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.alternate_header, #totals
+{
+    color: #000000;
+    font: 1em "Courier New", monospace;
+
+    background-color: #FFFFFF;
+    padding: 3px;
+    border: 1px solid #000000;
+
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.template_row, #task_row
+{
+    display:none;
+}
+
+#totals
+{
+    border-top:15px solid rgba( 0, 0, 0, 255 );
+    text-align:center;
+}
+
+.button_tg
+{
+    background-color: #FFFFFF;
+    background-repeat: no-repeat;
+    background-position: left center;
+        
+    padding-left:16px;
+        
+    border: 1px solid #E1E1E1;
+        
+    min-width: 30px;
+    min-height: 20px;
+}
+    
+.submit
+{
+    background-image: url( "../images/icons/active/action_check.png" );
+}
+    
+.add
+{
+    background-image: url( "../images/icons/active/action_add.png" );
+}
+    
+.remove
+{
+    background-image: url( "../images/icons/active/action_delete.png" );
+}
+
+.description
+{
+    background-image: url( "../images/icons/active/reply.png" );
+}
+
+.help
+{
+    background-image: url( "../images/help.png" );
+}
+
+.back 
+{
+    background-image: url( "../images/icons/active/arrow_back.png" );
+}
+
+.next
+{
+    background-image: url( "../images/icons/active/arrow_next.png" );
+}
+
+.hide_me
+{
+    display:none;
+}
+
+.duration_enabled
+{
+    border:1px solid #EEE;
+    background-color: #FFF;
+    text-align: center;
+}
+
+.duration_disabled
+{
+    border:1px solid #DDD;
+    background-color: #EEE;
+    text-align: center;
+}   
+
+#overlay, #overlay_native
+{
+    background-color: rgba( 0, 0, 0, 0 );
+
+    width: 550px;
+    height: 550px;
+
+    overflow: auto;
+
+    border: 10px solid #CCC;
+    padding: 0px;
+}

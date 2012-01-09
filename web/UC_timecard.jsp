@@ -125,7 +125,26 @@
             <!-- FIXME: Check that the time is not already in a submitted sheet. -->
             <!-- FIXME: Check that the day is not more than 24 hours on timesheet submit. -->
             <!-- FIXME: Enforce that entry has a comment. -->
-            <sql:query dataSource="jdbc/sarariman" var="existing" sql="SELECT * FROM hours WHERE task=? AND date=? AND employee=?">
+     f( week.html( ) != ( last_saturday[ 0 ] + "-" + last_saturday[ 1 ] + "-" + last_saturday[ 2 ] ) )
+    {
+        week.html( last_saturday[ 0 ] + "-" + last_saturday[ 1 ] + "-" + last_saturday[ 2 ] );
+
+        if( day != 0 )
+        {
+            var yyyy = last_saturday[ 0 ];
+            var mm   = last_saturday[ 1 ];
+            var dd   = last_saturday[ 2 ] + day;
+
+            if( dd > dayCount[ mm - 1 ] )
+            {
+                dd = dd - dayCount[ mm - 1 ];
+                mm = mm == 12 ? 1 : mm + 1;
+            }
+
+            date.html( yyyy + "-" + mm + "-" + dd );
+        }
+    }
+       <sql:query dataSource="jdbc/sarariman" var="existing" sql="SELECT * FROM hours WHERE task=? AND date=? AND employee=?">
                 <sql:param value="${task}"/>
                 <sql:param value="${param.date}"/>
                 <sql:param value="${employeeNumber}"/>
@@ -218,7 +237,7 @@
         <div class="wrapper">
             <div class="message">
                 <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
-                <h1><br/><br/>${user.fullName}'s TimeSheet for the Week of <a href="#">${thisWeekStart}</a></h1>
+                <h1><br/><br/>${user.fullName}'s TimeSheet for the Week of <a href="#"><span id="week_start">${thisWeekStart}</span></a></h1>
             </div>
             <br/><br/>
 
@@ -228,17 +247,30 @@
 
 
     <div id="holder" style="font-size:1.2em;margins:auto;width:90%;">
+    
+        <!-- ##### Prev / Next Week Temp Buttons ##### -->
+
+
+        <!-- -->
         
         <span style="padding-right:5px;border-right:1px solid #CCC;font-size:1em;">
-            <button type="button" id="TimeGrid_Remove" class="removeFields button remove" style="width:10%;">Remove Row</button>
-            <button type="button" id="TimeGrid_Add" class="addFields button add" style="width:10%;">Add Row</button>
-            <button type="button" id="descriptionButton" class="button description" style="width:10%;">Description</button>
-            <button type="button" id="submitButton" class="button submit" style="width:10%;">Save Changes</button>
-            <button type="button" id="helpButton" class="button help" style="width:10%;">Help</button>
+            <button type="button" id="TimeGrid_Remove" class="removeFields button_tg remove" style="width:10%;">Remove Row</button>
+            <button type="button" id="TimeGrid_Add" class="addFields button_tg add" style="width:10%;">Add Row</button>
+            <button type="button" id="descriptionButton" class="button_tg description" style="width:10%;">Description</button>
+            <button type="button" id="submitButton" class="button_tg submit" style="width:10%;">Save Changes</button>
+            <button type="button" id="helpButton" class="button_tg help" style="width:10%;">Help</button>
+
+            <form action="${request.requestURI}" method="post" style="margin:0;padding:0;display:inline;">
+                <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+                <input type="submit" class="button_tg back" style="width:10%;" name="week" value="${prevWeekString}"/>
+		<fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
+                <input type="submit" class="button_tg next" style="width:10%;" name="week" value="${nextWeekString}"/>
+            </form>
+
         </span>
         
         <br />
-        <textarea cols="80" rows="10" name="description" id="description" class="hide_me" style="margin-top:5px;border:1px solid #CCC;width:80%;">Optional Description</textarea>
+        <textarea cols="80" rows="10" name="description" id="description" class="hide_me" style="margin-top:5px;border:1px solid #CCC;width:80%;">I did work today!</textarea>
         
         
         <br /><br />
