@@ -23,6 +23,57 @@ day = day < 6 ? day + 1 : 0;
 
 //------------------------------------------------------------------------------------------
 
+function updateRowAddRemove( )
+{
+    var add = '<div id="TimeGrid_Add" style="width:16px;height:16px;margin:0;padding:0;border:0;background-color:transparent;background-image:url(\'images/icons/active/action_add.png\');background-repeat:no-repeat;float:left;"></div>'
+    var rem = '<div id="TimeGrid_Remove" style="width:16px;height:16px;margin:0;padding:0;border:0;background-color:transparent;background-image:url(\'images/icons/active/action_delete.png\');background-repeat:no-repeat;float:left;"></div>';
+
+    if( $( "#TimeGrid_Add" ).length > 0 )
+    {
+        $( "#TimeGrid_Remove" ).remove( );
+        $( "#TimeGrid_Add" ).remove( );
+    }
+
+    $( "#task_row" + count ).children( ":first" ).html( ( count > threshold ? add + rem : add ) );
+
+    $( '#TimeGrid_Add' ).bind( 'click', function( )
+    {
+        addRow( );
+
+        //----------------------------------------------------------------------------------
+        // Do not allow row to use a previously taken value
+
+        var i = 0;
+        var id = '#billable' + count;
+        var value;
+
+        for( ; i < count; i++ )
+        {
+            // Only prevent the task from being used if the task is already in use
+            if( $( '#billable' + i ).attr( 'disabled' ) == 'true' )
+            {
+                value = $( '#billable' + i + ' option:selected' ).val( );
+                $( id + ' option[value="' + value + '"]' ).remove( );
+            }
+        }
+
+        $( id ).attr( 'style', 'width:100%;' );
+    } );
+
+    $( '#TimeGrid_Remove' ).bind( 'click', function( )
+    {
+        if( count > threshold )
+        {
+            $( '#task_row' + count ).remove( );
+            count--;
+            updateRowAddRemove( );
+        }
+    } );
+
+}
+
+//------------------------------------------------------------------------------------------
+
 function setVisibleWeek( )
 {
     var monthStr = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
@@ -174,8 +225,8 @@ function calcTotals_RowInd( columnNumber )
             }
         } );   
        
-            
-        $( '#' + days[ columnNumber ] + '_totals' ).html( total );
+        if( total > 0 ) 
+            $( '#' + days[ columnNumber ] + '_totals' ).html( total );
     }
     else
     {
@@ -183,8 +234,9 @@ function calcTotals_RowInd( columnNumber )
         {
             total += parseFloat( $( '#' + days[ i ] + '_totals' ).html( ) );
         }
-        
-        $( '#Total_totals' ).html( total );
+       
+        if( total > 0 ) 
+            $( '#Total_totals' ).html( total );
     }
 }
 
@@ -249,7 +301,8 @@ function addRow( )
     count++;
     
     var $clone = $( '#task_row' ).clone( );
-    
+    $clone.removeClass( "hide_me" );
+ 
     $clone.attr( 'id', 'task_row' + count );
     
     $clone.children( ).each( function( index )
@@ -284,6 +337,8 @@ function addRow( )
         calcTotals_Row( -1 );
         calcTotals_Col( -1 );
     } );
+
+    updateRowAddRemove( );
 }
 
 //------------------------------------------------------------------------------------------
@@ -426,7 +481,8 @@ $( document ).ready( function( )
     weekIsCurrent( );
     setDayCount( );
     setVisibleWeek( );
-    bind( );
+
+//    bind( );
     
     // Make sure the TimeGrid ID is being used.
     // Check the length because the selector will always return
@@ -435,7 +491,7 @@ $( document ).ready( function( )
     if( $( '#TimeGrid' ).length > 0 )
     {
         //First set the appropriate header styles
-        setHeaders( );
+//        setHeaders( );
         
         //If there is data already, fill out the grid
         fillGrid( );
@@ -445,8 +501,8 @@ $( document ).ready( function( )
         if( $( '#task_row0' ).length == 0 )
             addRow( );   
         
-        calcTotals_Row( -1 );
-        calcTotals_Col( -1 );
+//        calcTotals_Row( -1 );
+//        calcTotals_Col( -1 );
         
         // Do not allow user to remove a row that has saved data in it2
         threshold = count;
@@ -549,6 +605,7 @@ $( document ).ready( function( )
         {
             $( '#task_row' + count ).remove( );
             count--;
+            updateRowAddRemove( );
         }
     } );
     
@@ -613,7 +670,7 @@ $( document ).ready( function( )
     //--------------------------------------------------------------------------------------
     
     // For each id containing 'duration'
-    $( 'input[id*="duration"]' ).each( function( index )
+    $( 'input[id*="dduration"]' ).each( function( index )
     {   
         // Are we in current week? (did not go back or forth)
         if( in_current_week )
@@ -679,7 +736,7 @@ $( document ).ready( function( )
     
     //--------------------------------------------------------------------------------------
     
-    $( 'button[id*="duration_disabled_"]' ).bind( 'click', function( )
+    $( 'button[id*="dduration_disabled_"]' ).bind( 'click', function( )
     {
         var reveal = $( this ).parent( ).attr( 'rel' );
      
@@ -914,5 +971,5 @@ $( document ).ready( function( )
 
     $( "#prevWeekButton" ).bind( 'click', function( ){ $( "#prev_week" ).trigger( 'click' ); } );
     $( "#nextWeekButton" ).bind( 'click', function( ){ $( "#next_week" ).trigger( 'click' ); } );
-
+    $( "#todayButton" ).bind( 'click', function( ){ $( "#return_to_today" ).trigger( 'click' ); } );
 } );

@@ -200,7 +200,7 @@
             <b>Task:</b> ${fn:escapeXml(entry.name)} (${entry.task})<br/>
         </div>
         
-        <form method="post" target="take_it">            
+        <form id="submit_edit_sheet" method="post" target="take_it">            
             
             <br/> 
             <input type="hidden" name="date" value="${entry.date}"/>
@@ -215,16 +215,17 @@
             <br/>
             
             <div class="sep">
-                <label for="description">Description: </label><br/>
+                <label for="description">Description of Time Worked (optional): </label><br/>
                 <textarea cols="48" rows="10" name="description" id="description" style="border:1px solid #CCC;width:98%;">${fn:escapeXml(entry.description)}</textarea><br/> 
             </div>
             
             <br/>
             
             <div class="sep" style="text-align:center;">
-            <label for="reason">Reason: </label>
-            <input size="40" type="text" name="reason" id="reason" style="border:1px solid #CCC;"/>
-            <input id="modify" type="submit" enabled="${canModify}" name="modifyEntry" value="Modify" class="button submit"/>
+            <label for="reason">Reason for Change: </label>
+            <input size="30" type="text" name="reason" id="reason" style="border:1px solid #CCC;"/>
+            <input id="modify" type="submit" name="modifyEntry" value="Modify" style="display:none;"/>
+            <button id="visible_modify" type="button" enabled="${canModify}" class="button_tg submit">Modify</button>
             </div>
         </form>
             

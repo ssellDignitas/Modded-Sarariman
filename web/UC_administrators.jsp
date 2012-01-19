@@ -49,7 +49,7 @@
 <c:set var="isAdministrator" value="${user.administrator}"/>
 
 <div id="header">
-    <%@include file="UC_header.jsp" %>
+    <%@include file="header.jsp" %>
 </div>
 
 <div class="wrapper">

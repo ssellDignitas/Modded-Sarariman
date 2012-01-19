@@ -78,6 +78,16 @@
                 border-radius: 5px;
                 moz-border-radius: 5px;
             }
+
+            .green
+            {
+                border-bottom: 2px solid #00FF00;
+            }
+
+            .not_green
+            {
+                border-bottom: 2px solid #FF0000;
+            }
         </style>
 
     </head>
@@ -253,19 +263,33 @@
 
         <!-- -->
         
-        <span style="padding-right:5px;border-right:1px solid #CCC;font-size:1em;">
+        <span style="padding-right:5px;border-right:1px solid #CCC;font-size:9px;vertical-align:middle;">
             <button type="button" id="TimeGrid_Remove" class="removeFields button_tg remove" style="width:10%;">Remove Row</button>
             <button type="button" id="TimeGrid_Add" class="addFields button_tg add" style="width:10%;">Add Row</button>
             <button type="button" id="descriptionButton" class="button_tg description" style="width:10%;">Description</button>
             <button type="button" id="submitButton" class="button_tg submit" style="width:10%;">Save Changes</button>
-            <button type="button" id="helpButton" class="button_tg help" style="width:10%;">Help</button>
 
+            <form action="${request.requestURI}" method="post" style="margin:0;padding:0;display:inline;">
+                <input type="hidden" value="true" name="submit"/>
+                <input type="submit" style="display:none;" id="submitReal" value="Submit"/>
+                <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+                <input type="hidden" name="week" value="${weekString}"/>
+
+                <button id="submitHoursButton" class="button_tg" style="width:10%;" <c:if test="${submitted}">disabled="true"</c:if>>Submit Sheet</button>
+            </form>
+            
             <form action="${request.requestURI}" method="post" style="margin:0;padding:0;display:inline;">
                 <fmt:formatDate var="prevWeekString" value="${du:prevWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
                 <input type="submit" class="button_tg back" style="width:10%;" name="week" value="${prevWeekString}"/>
 		<fmt:formatDate var="nextWeekString" value="${du:nextWeek(week)}" type="date" pattern="yyyy-MM-dd"/>
                 <input type="submit" class="button_tg next" style="width:10%;" name="week" value="${nextWeekString}"/>
+                <!-- Used for page refresh after submitting from dialogue -->
+                <fmt:formatDate var="currentWeek" value="${week}" type="date" pattern="yyyy-MM-dd"/>
+                <input type="submit" id="refresh_week" style="display:none;" name="week" value="${currentWeek}"/>
             </form>
+
+            <button type="button" class="button_tg <c:if test='${!submitted}'>not_</c:if>green" style="width:10%;" disabled="true">Submitted</button>
+            <button type="button" class="button_tg <c:if test='${!approved}'>not_</c:if>green"  style="width:10%;" disabled="true">Approved</button>
 
         </span>
         
@@ -464,7 +488,7 @@
         
         <div id="overlay" class="hide_me" style="width:550px;height:550px;overflow:hidden;border-color:#CCC;background-color:#FFF;">
             
-            <iframe id="displayEdit" style="width:100%;height:490px;border:0px;overflow:hidden;padding-bottom:0;" scrolling="no" FRAMEBORDER="0"></iframe>
+            <iframe id="displayEdit" name="displayEdit" style="width:100%;height:490px;border:0px;overflow:hidden;padding-bottom:0;" scrolling="no" FRAMEBORDER="0"></iframe>
             <!--<div class="contentWrap" id="content"></div>-->
             
             <div style="text-align:center;background-color:#FFF;border:0px;width:95%;margin:auto;">
@@ -479,9 +503,6 @@
         <!-- ########################################################################### -->
         <!-- ########################################################################### -->
         <!-- 
-                HC SVNT DRACONES 
-                 
-                ... well maybe not dracones but there is a shift here.
                 Above is the grid itself and the visual/interactive aspects of it.
                 Below is the unseen Sarariman querying and data retrieval.
         
