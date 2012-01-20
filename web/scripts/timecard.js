@@ -25,8 +25,8 @@ day = day < 6 ? day + 1 : 0;
 
 function updateRowAddRemove( )
 {
-    var add = '<div id="TimeGrid_Add" style="width:16px;height:16px;margin:0;padding:0;border:0;background-color:transparent;background-image:url(\'images/icons/active/action_add.png\');background-repeat:no-repeat;float:left;"></div>'
-    var rem = '<div id="TimeGrid_Remove" style="width:16px;height:16px;margin:0;padding:0;border:0;background-color:transparent;background-image:url(\'images/icons/active/action_delete.png\');background-repeat:no-repeat;float:left;"></div>';
+    var add = '<div id="TimeGrid_Add" style="width:16px;height:16px;margin:0;padding:0;border:0;background-color:transparent;background-image:url(\'images/icons/active/action_add.png\');background-repeat:no-repeat;float:left;cursor:pointer;"></div>'
+    var rem = '<div id="TimeGrid_Remove" style="width:16px;height:16px;margin:0;padding:0;border:0;background-color:transparent;background-image:url(\'images/icons/active/action_delete.png\');background-repeat:no-repeat;float:left;cursor:pointer;"></div>';
 
     if( $( "#TimeGrid_Add" ).length > 0 )
     {
@@ -396,33 +396,44 @@ function makeForm( billableElement, durationElement, index )
     var descript    = $( '#description' ).clone( );
     var date        = $( '#date' ).clone( );
     var week        = $( '#week' ).clone( );
-   
+
     // Set proper dates
-    if( week.html( ) != ( last_saturday[ 0 ] + "-" + last_saturday[ 1 ] + "-" + last_saturday[ 2 ] ) )
+    week.html( last_saturday[ 0 ] + "-" + ( last_saturday[ 1 ] < 10 ? '0' + last_saturday[ 1 ] : last_saturday[ 1 ] ) + "-" + ( last_saturday[ 2 ] < 10 ? '0' + last_saturday[ 2 ] : last_saturday[ 2 ] ) );
+
+    var mapping = new Object;
+          
+    mapping.Sat = 0;
+    mapping.Sun = 1;
+    mapping.Mon = 2;
+    mapping.Tue = 3;
+    mapping.Wed = 4;
+    mapping.Thu = 5;
+    mapping.Fri = 6;
+
+    var dur_date = durationElement.substr( 9, 3 );
+
+    if( mapping[ dur_date ] != 0 )
     {
-        week.html( last_saturday[ 0 ] + "-" + last_saturday[ 1 ] + "-" + last_saturday[ 2 ] );
+         var yy = last_saturday[ 0 ];
+         var mm = last_saturday[ 1 ];
+         var dd = last_saturday[ 2 ] + mapping[ dur_date ];
 
-        if( day != 0 )
-        {
-            var yyyy = last_saturday[ 0 ];
-            var mm   = last_saturday[ 1 ];
-            var dd   = last_saturday[ 2 ] + day;
+         if( dd > dayCount[ mm - 1 ] )
+         {
+             if( mm == '12' )
+                 yy += 1;
+                   
+             dd = dd - dayCount[ mm - 1 ];
+             mm = mm == 12 ? 1 : mm + 1;
+         }
 
-            if( dd > dayCount[ mm - 1 ] )
-            {
-                if( mm == '12' )
-                    yyyy += 1;
+         dd = dd < 10 ? '0' + dd : dd;
+         mm = mm < 10 ? '0' + mm : mm;
 
-                dd = dd - dayCount[ mm - 1 ];
-                mm = mm == 12 ? 1 : mm + 1;
-            }
-            
-            dd = dd < 10 ? '0' + dd : dd;
-            mm = mm < 10 ? '0' + mm : mm;
-
-            date.html( yyyy + "-" + mm + "-" + dd );
-        }
-    }
+         date.val( yy + '-' + mm + '-' + dd );
+     }
+     else
+         date.val( last_saturday[ 0 ] + '-' + last_saturday[ 1 ] + '-' + last_saturday[ 2 ] );
 
     //-------------------------------------------------------------------------------------- 
     
@@ -501,11 +512,17 @@ $( document ).ready( function( )
         if( $( '#task_row0' ).length == 0 )
             addRow( );   
         
-//        calcTotals_Row( -1 );
-//        calcTotals_Col( -1 );
+        calcTotals_Row( -1 );
+        calcTotals_Col( -1 );
         
         // Do not allow user to remove a row that has saved data in it2
         threshold = count;
+
+        // Quick, dirty solution to remove row button appearing on a preloaded row on first page load
+        $( "#TimeGrid_Remove" ).remove( );
+
+        for( var i = 0; i < count + 1; i++ )
+            if( $( "#billable" + i ).val( ) != "..." ) $( "#billable" + i ).attr( "disabled", "true" );
     }
     
     //--------------------------------------------------------------------------------------
@@ -577,7 +594,6 @@ $( document ).ready( function( )
     
     $( '#TimeGrid_Add' ).bind( 'click', function( )
     {
-        addRow( );
         
         //----------------------------------------------------------------------------------
         // Do not allow row to use a previously taken value
@@ -625,48 +641,54 @@ $( document ).ready( function( )
     
     //--------------------------------------------------------------------------------------
     
-    $( '#submitButton' ).bind( 'click', function( )
+    $( "#saveButton" ).bind( 'click', function( )
     {
+        if( $( this ).hasClass( 'saveButton_disabled' ) )
+            return;
+
         var billable, duration;
-        var count = 0;
+        var cnt = 0;
         var ind = new Array( );
-
-        // Iterate through all input duration cells for current day
-        $( 'input[id*="duration_' + days[ day ] + '"]' ).each( function( index )
+        
+        $( '.duration_input' ).each( function( index )
         {
-            //If there is a value in the input and it is valid
-            if( $( this ).val( ).length > 0 && validateInput( $( this ).val( ) ) )
+            if( $( this ).attr( 'id' ).length > 12 )
             {
-                //Now must check if the task has been set.
-                //Task is 'billableX' where X = index - 1
-                billable = $( '#billable' + ( index - 1 ) );
-
-                if( billable.length > 0 && billable.val( ).length > 0 )
+                if( $( this ).val( ).length > 0 && validateInput( $( this ).val( ) ) )
                 {
-                    duration = $( '#duration_' + days[ day ] + ( index - 1 ) );
+                    // Make sure task has been specified
+                    billable = $( "#billable" + ( $( this ).attr( 'id' ).substr( 12 ) ) );
 
-                    // if the duration text-box is NOT hidden, then it means no previous data stored in it
-                    if( duration.hasClass( 'hide_me' ) == false )
-                    {                    
-                        makeForm( billable.attr( 'id' ), duration.attr( 'id' ), index );
+                    if( billable.val( ) != "..." )
+                    {
+                        makeForm( billable.attr( 'id' ), $( this ).attr( 'id' ), index );
 
-                        //$( '#activeInput' + index ).trigger( 'click' );
-                        ind[ count ] = index;
-                        count++;
+                        ind[ cnt ] = index;
+                        cnt++;
                     }
                 }
             }
-        } ); 
-        
-        for( var i = 0; i < count; i++ )
-          $( '#activeInput' + ind[ i ] ).trigger( 'click' );
-        
-        setTimeout( function( )
-        {
-            window.location.reload( );
-       }, 1000 );
+        } );
+
+        for( var i = 0; i < cnt; i++ )
+            $( "#activeInput" + ind[ i ] ).trigger( 'click' );
+
+        setTimeout( function( ){ $( "#refresh_week" ).trigger( 'click' ); }, 1000 );
     } );
     
+    $( '#submitButton' ).bind( 'click', function( )
+    {
+        $( '#saveButton' ).trigger( 'click' );
+        $( '#submitReal' ).trigger( 'click' );
+    } );
+    
+    $( '#retractButton' ).bind( 'click', function( )
+    {
+        $( '#retractReal' ).trigger( 'click' );
+
+        setTimeout( function( ){ $( "#refresh_week" ).trigger( 'click' ); }, 300 );
+    } );   
+
     //--------------------------------------------------------------------------------------
     
     // For each id containing 'duration'
@@ -966,8 +988,6 @@ $( document ).ready( function( )
     $( "a[rel='#overlay_native']" ).overlay( { mask: 'white', closeOnClick: false } );
  
     //--------------------------------------------------------------------------------------
-
-    $( "#submitHoursButton" ).bind( 'click', function( ){ $( "#submitReal" ).trigger( 'click' ) } );
 
     $( "#prevWeekButton" ).bind( 'click', function( ){ $( "#prev_week" ).trigger( 'click' ); } );
     $( "#nextWeekButton" ).bind( 'click', function( ){ $( "#next_week" ).trigger( 'click' ); } );

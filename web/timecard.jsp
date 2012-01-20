@@ -162,8 +162,7 @@
         margin-top:10px;
     }
 
-    #prevWeekButton:hover, #nextWeekButton:hover, #todayButton:hover, #saveButton:hover, #submitButton:hover, #retractButton:hover, #approvedButton:hover,
-    #duration_Mon:hover, #duration_Tue:hover, #duration_Wed:hover, #duration_Thu:hover, #duration_Fri:hover, #duration_Sat:hover, #duration_Sun:hover
+    #prevWeekButton:hover, #nextWeekButton:hover, #todayButton:hover, #saveButton:hover, #submitButton:hover, #retractButton:hover, #approvedButton:hover, .duration_input:hover
     {
         background-color:#C6CACC;
         cursor:pointer;
@@ -184,7 +183,7 @@
     {
         width:10%;
         max-width:10%;
-        border-bottom:1px solid #BFC2CF;
+        border-bottom:1px dashed #EEEEEE;
         padding-top:10px;
         padding-bottom:10px;
     }
@@ -371,15 +370,34 @@
             </div>
             
             <c:if test="${!timesheet.submitted}">
+            <form action="${request.requestURI}" method="post" style="margin:0;padding:0;display:inline;" target="take_the_punch">
+                <input type="hidden" value="true" name="submit"/>
+                <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+                <input type="hidden" name="week" value="${weekString}"/>
+                <input type="submit" style="display:none;" id="submitReal" value="Submit"/>
+            </form>
+
             <div id="submitButton">
                 <div style="padding:0;margin:0;position:relative;top:25%;text-align:center;">Submit</div>
+
+
             </div>
             </c:if>
+
             <c:if test="${timesheet.submitted}">
                 <c:if test="${!approved}">
-                    <div id="retractButton">
-                        <div style="padding:0;margin:0;position:relative;top:25%;text-align:center;">Retract</div>
-                    </div>
+
+                <form method="post" action="timesheetController" target="take_the_punch">
+                    <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
+                    <input type="hidden" value="${weekString}" name="week"/>
+                    <input type="hidden" value="${employeeNumber}" name="employee"/>
+                    <!-- FIXME: Only allow this if the time has not been invoiced. -->
+                    <input type="submit" name="action" class="hide_me" id="retractReal"  value="Reject"/>
+                 </form>
+
+                 <div id="retractButton">
+                     <div style="padding:0;margin:0;position:relative;top:25%;text-align:center;">Retract</div>
+                 </div>
                 </c:if>
                 <c:if test="${approved}">
                     <div id="approvedButton" style="background-color:#FFFFFF;color:#BBBBBB;cursor:default;">
@@ -400,18 +418,39 @@
             <!-- MAIN GRID --> 
             <div id="grid">
 
+                <!-- BEGIN MAGIC -->
+
+               <textarea cols="80" rows="10" name="description" id="description" class="hide_me" style="margin-top:5px;border:1px solid #CCC;width:80%;">I did work today!</textarea>
+               <form action="${request.requestURI}" method="post" id='copy_form' target="take_the_punch"></form>
+               <form action="${request.requestURI}" method="post" id='main_form' target="take_the_punch">
+               <fmt:formatDate var="now" value="${du:now()}" type="date" pattern="yyyy-MM-dd" />
+               <input size="10" type="text" name="date" id="date" value="${now}" class="hide_me"/>
+               <input type="hidden" name="week" id="week" value="${weekString}"/>
+               <select name="unbillable_task" id="unbillable_task" class="hide_me" onchange="resetSelect('billable_task');enable('submit');">
+                   <option selected="true"></option>
+                   <c:forEach var="task" items="${sarariman:unbillableTasks(sarariman, user)}">
+                       <option value="${task.id}">${fn:escapeXml(task.name)} (${task.id})
+                       <c:if test="${!empty task.project}">
+                           - ${fn:escapeXml(task.project.name)}:${fn:escapeXml(sarariman.customers[task.project.customer].name)}
+                       </c:if>
+                       </option>
+                   </c:forEach>
+                </select>
+
+                <!-- END MAGIC -->
+
                 <table id="TimeGrid" border="0" cellspacing="0" style="margin:0;padding:0;width:100%;">
                     <thead style="font-size:18px;font-weight:normal;">
                         <th style="width:5%;max-width:5%;"></th>
-                        <th style="width:15%;max-width:15%;">Task</th>
-                        <th style="width:10%;max-width:10%;">S</th>
-                        <th style="width:10%;max-width:10%;">S</th>
-                        <th style="width:10%;max-width:10%;">M</th>
-                        <th style="width:10%;max-width:10%;">T</th>
-                        <th style="width:10%;max-width:10%;">W</th>
-                        <th style="width:10%;max-width:10%;">T</th>
-                        <th style="width:10%;max-width:10%;">F</th>
-                        <th style="width:10%;max-width:10%;"></th>
+                        <th style="width:15%;max-width:15%;padding-bottom:20px;">Task</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">S</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">S</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">M</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">T</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">W</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">T</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;">F</th>
+                        <th style="width:10%;max-width:10%;padding-bottom:20px;"></th>
                     </thead>
 
                     <tbody>
@@ -470,7 +509,7 @@
                                 <input type="submit" value="Record" id="submit_Fri" class="hide_me"/>
                             </td>
 
-                            <td id="task_total" class="total_cell" style="width:10%;max-width:10%;"></td>
+                            <td id="task_total" class="total_cell" style="width:10%;max-width:10%;text-align:center;font-weight:bold;color:#AAAAAA;"></td>
 
                         </tr>
 
@@ -481,21 +520,25 @@
 
                         <!-- ############################################################ -->
 
-                        <tr id="totals" style="text-align:center;">
+                        <tr id="totals" style="text-align:center;font-weight:bold;color:#AAAAAA;">
                             <td></td>
                             <td id="rowTotalTitle"></td>
-                            <td id="Sat_totals"></td>
-                            <td id="Sun_totals"></td>
-                            <td id="Mon_totals"></td>
-                            <td id="Tue_totals"></td>
-                            <td id="Wed_totals"></td>
-                            <td id="Thu_totals"></td>
-                            <td id="Fri_totals"></td>
-                            <td id="Total_totals" style="text-align:left;"></td>
+                            <td id="Sat_totals" style="padding-top:20px;"></td>
+                            <td id="Sun_totals" style="padding-top:20px;"></td>
+                            <td id="Mon_totals" style="padding-top:20px;"></td>
+                            <td id="Tue_totals" style="padding-top:20px;"></td>
+                            <td id="Wed_totals" style="padding-top:20px;"></td>
+                            <td id="Thu_totals" style="padding-top:20px;"></td>
+                            <td id="Fri_totals" style="padding-top:20px;"></td>
+                            <td id="Total_totals" style="padding-top:20px;"></td>
                         </tr>                      
 
                     </tbody>
                 </table>
+
+                </form>
+                <iframe name="take_the_punch" id="take_the_punch" class="hide_me"/>
+                <div id="formHolder" class="hide_me"></div>
 
             </div> <!-- End MAIN GRID -->
 
