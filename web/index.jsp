@@ -1,6 +1,6 @@
 <%--
-  Copyright (C) 2009-2011 StackFrame, LLC
-  This code is licensed under GPLv2.
+moose  Copyright (C) 2009-2011 StackFrame, LLC
+ This code is licensed under GPLv2.
 --%>
 
 <%@page contentType="application/xhtml+xml" pageEncoding="UTF-8"%>
