@@ -5,13 +5,15 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<%@ page import="com.dignitastechnologies.sarariman.qb.qbXMLWriter"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     
     <!-- Scripts -->
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
     <script type="text/javascript" src="http://cdn.jquerytools.org/1.2.5/full/jquery.tools.min.js"></script>
     <script type="text/javascript" src="scripts/timecard.js"></script>
 
@@ -162,6 +164,16 @@
         margin-top:10px;
     }
 
+    #modifyField
+    {
+        margin-top:65px;
+        background-color:#FFFFFF;
+        border: 1px solid #BFC2CF;
+        border-radius: 5px;
+ 
+        padding: 5px;
+    }
+
     #prevWeekButton:hover, #nextWeekButton:hover, #todayButton:hover, #saveButton:hover, #submitButton:hover, #retractButton:hover, #approvedButton:hover, .duration_input:hover
     {
         background-color:#C6CACC;
@@ -195,150 +207,21 @@
     <!-- Header Include -->
     <%@include file="header.jsp"%>
 
-    <!-- Logic Set Up -->
+    <input type="hidden" name="remote_user" id="remote_user_original" value="${employeeNumber}"/>
+    <input type="hidden" name="remote_address" id="remote_address_original" value="${pageContext.request.remoteHost}"/>
+    <div id="employee_param" class="hide_me">${employeeNumber}</div>
 
+    <c:choose>
+        <c:when test="${!empty param.week}">
+            <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
+        </c:when>
+        <c:otherwise>
+            <c:set var="week" value="${du:weekStart(du:now())}"/>
+        </c:otherwise>
+    </c:choose>
 
-
-        <!-- ########################################################################### -->
-        
-        <c:set var="count" value="0" />
-
-        <c:choose>
-            <c:when test="${!empty param.week}">
-                <fmt:parseDate var="week" value="${param.week}" type="date" pattern="yyyy-MM-dd"/>
-            </c:when>
-            <c:otherwise>
-                <c:set var="week" value="${du:weekStart(du:now())}"/>
-            </c:otherwise>
-        </c:choose>
-
-        <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employeeNumber, week)}"/>
-        <c:set var="submitted" value="${timesheet.submitted}"/>
-
-        <c:if test="${!submitted && param.submit}">
-            <c:set var="submitted" value="${sarariman:submitTimesheet(timesheet)}"/>
-        </c:if>
-
-        <c:if test="${!empty param.recordTime}">
-
-            <c:choose>
-                <c:when test="${!empty param.unbillable_task && !empty param.billable_task}">
-                    <p class="error">You must enter a task only from billable or unbillable.</p>
-                    <c:set var="insertError" value="true"/>
-                </c:when>
-                <c:when test="${!empty param.unbillable_task}">
-                    <c:set var="task" value="${param.unbillable_task}"/>
-                </c:when>
-                <c:when test="${!empty param.billable_task}">
-                    <c:set var="task" value="${param.billable_task}"/>
-                </c:when>
-                <c:otherwise>
-                    <p class="error">You must enter a task.</p>
-                    <c:set var="insertError" value="true"/>
-                </c:otherwise>
-            </c:choose>
-
-            <!-- FIXME: Check that the time is not already in a submitted sheet. -->
-            <!-- FIXME: Check that the day is not more than 24 hours on timesheet submit. -->
-            <!-- FIXME: Enforce that entry has a comment. -->
-     f( week.html( ) != ( last_saturday[ 0 ] + "-" + last_saturday[ 1 ] + "-" + last_saturday[ 2 ] ) )
-    {
-        week.html( last_saturday[ 0 ] + "-" + last_saturday[ 1 ] + "-" + last_saturday[ 2 ] );
-
-        if( day != 0 )
-        {
-            var yyyy = last_saturday[ 0 ];
-            var mm   = last_saturday[ 1 ];
-            var dd   = last_saturday[ 2 ] + day;
-
-            if( dd > dayCount[ mm - 1 ] )
-            {
-                dd = dd - dayCount[ mm - 1 ];
-                mm = mm == 12 ? 1 : mm + 1;
-            }
-
-            date.html( yyyy + "-" + mm + "-" + dd );
-        }
-    }
-       <sql:query dataSource="jdbc/sarariman" var="existing" sql="SELECT * FROM hours WHERE task=? AND date=? AND employee=?">
-                <sql:param value="${task}"/>
-                <sql:param value="${param.date}"/>
-                <sql:param value="${employeeNumber}"/>
-            </sql:query>
-            <c:if test="${!empty existing.rows}">
-                <p class="error">Cannot have more than one entry for a given task and date.</p>
-                <c:set var="insertError" value="true"/>
-            </c:if>
-
-            <c:set var="entryDescription" value="${fn:trim(param.description)}"/>
-            <c:if test="${empty entryDescription}">
-                <p class="error">You must enter a description.</p>
-                <c:set var="insertError" value="true"/>
-            </c:if>
-
-            <fmt:parseDate var="parsedParamDate" value="${param.date}" type="date" pattern="yyyy-MM-dd"/>
-
-            <c:set var="timesheetOfSubmission" value="${sarariman:timesheet(sarariman, employeeNumber, du:weekStart(parsedParamDate))}"/>
-            <c:if test="${timesheetOfSubmission.submitted}">
-                <p class="error">Cannot modify a submitted timesheet.</p>
-                <c:set var="insertError" value="true"/>
-            </c:if>
-
-
-            <c:choose> 
-                <c:when test="${empty param.duration}">
-                    <p class="error">You must have a duration.</p>
-                    <c:set var="insertError" value="true"/>
-                </c:when>
-                <c:otherwise>
-                    <c:if test="${param.duration <= 0.0}">
-                        <p class="error">Duration must be positive.</p>
-                        <c:set var="insertError" value="true"/>
-                    </c:if>
-
-                    <c:if test="${param.duration > 24.0}">
-                        <p class="error">Duration must be less than 24 hours.</p>
-                        <c:set var="insertError" value="true"/>
-                    </c:if>
-                </c:otherwise>
-            </c:choose>
-
-            <c:if test="${!insertError}">
-                <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
-                    INSERT INTO hours (employee, task, date, description, duration) values(?, ?, ?, ?, ?)
-                    <sql:param value="${employeeNumber}"/>
-                    <sql:param value="${task}"/>
-                    <sql:param value="${param.date}"/>
-                    <sql:param value="${entryDescription}"/>
-                    <sql:param value="${param.duration}"/>
-                </sql:update>
-                <c:choose>
-                    <c:when test="${rowsInserted == 1}">
-                        <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
-                            INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration) values(?, ?, ?, ?, ?, ?, ?)
-                            <sql:param value="${employeeNumber}"/>
-                            <sql:param value="${task}"/>
-                            <sql:param value="${param.date}"/>
-                            <sql:param value="Entry created."/>
-                            <sql:param value="${pageContext.request.remoteHost}"/>
-                            <sql:param value="${employeeNumber}"/>
-                            <sql:param value="${param.duration}"/>
-                        </sql:update>
-                        <c:if test="${rowsInserted != 1}">
-                            <p class="error">There was an error creating the audit log for your entry.</p>
-                        </c:if>
-                    </c:when>
-                    <c:otherwise>
-                        <p class="error">There was an error creating your entry.</p>
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
-        </c:if>
-
-
-
-
-
+    <c:set var="timesheet" value="${sarariman:timesheet(sarariman, employeeNumber, week)}"/>
+    <c:set var="submitted" value="${timesheet.submitted}"/>
 
     <!-- Main Body Content -->
     <div id="grid_main_holder">
@@ -364,7 +247,13 @@
             <div id="nextWeekButton"></div>
 
             <!-- -->
+            <c:if test="${!timesheet.submitted}">
+            <div id="modifyField" class="hide_me">
+                 Because this TimeSheet does not belong to the current week, you must provide a reason for modifying it:
 
+                 <center><textarea id="modifyArea" style="width:95%;margin-top:15px;height:100px;"></textarea></center>
+            </div>
+            </c:if>
             <div id="saveButton" <c:if test="${submitted}">style="background-color:#FFFFFF;color:#BBBBBB;cursor:default;" class="saveButton_disabled"</c:if>>
                 <div style="padding:0;margin:0;position:relative;top:25%;text-align:center;">Save</div>
             </div>
@@ -375,12 +264,11 @@
                 <fmt:formatDate var="weekString" value="${week}" pattern="yyyy-MM-dd"/>
                 <input type="hidden" name="week" value="${weekString}"/>
                 <input type="submit" style="display:none;" id="submitReal" value="Submit"/>
+                <input id="modify" type="submit" name="modifyEntry" value="Modify" style="display:none;"/>
             </form>
 
             <div id="submitButton">
                 <div style="padding:0;margin:0;position:relative;top:25%;text-align:center;">Submit</div>
-
-
             </div>
             </c:if>
 
@@ -411,8 +299,8 @@
         <div id="holder">
 
             <div id="date_display">
-                <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" />
-                <div style="padding:0;margin:0;position:relative;top:25%;"><span id="week_start" class="hide_me">${thisWeekStart}</span><span id="visible_week"></span></div>
+                <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" /><fmt:formatDate var="actualWeek" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
+                <div style="padding:0;margin:0;position:relative;top:25%;"><span id="true_week" class="hide_me">${actualWeek}</span><span id="week_start" class="hide_me">${thisWeekStart}</span><span id="visible_week"></span></div>
             </div>
  
             <!-- MAIN GRID --> 
@@ -546,6 +434,33 @@
 
     </div>
 
+<form id="submit_edit_sheet" method="post">
+
+            <br/>
+            <input type="hidden" name="date" value="2012-01-22"/>
+            <input type="hidden" name="employee" value="25"/>
+            <input type="hidden" name="task" value="18"/>
+
+            <div class="sep">
+                <label for="duration">Duration:</label>
+                <input size="5" type="text" name="duration" id="duration" value="8.00" style="border:1px solid #CCC;"/>
+            </div>
+
+            <br/>
+
+            <div class="sep">
+                <label for="description">Description of Time Worked (optional): </label><br/>
+                <textarea cols="48" rows="10" name="description" id="description" style="border:1px solid #CCC;width:98%;">did work</textarea><br/>
+            </div>
+
+            <br/>
+
+            <div class="sep" style="text-align:center;">
+            <label for="reason">Reason for Change: </label>
+            <input size="30" type="text" name="reason" id="reason" value="reason for" style="border:1px solid #CCC;"/>
+            <input id="modify" type="submit" name="modifyEntry" value="Modify"/>
+            </div>
+        </form>
 
 
 

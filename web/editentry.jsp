@@ -146,36 +146,6 @@
             </c:if>
             <!-- FIXME: Need to also check the duration is a valid number. -->
 
-            <c:if test="${empty updateError}">
-                <sql:update dataSource="jdbc/sarariman" var="rowsUpdated">
-                    UPDATE hours SET duration=?,description=? WHERE date=? AND employee=? and task=?
-                    <sql:param value="${updateDuration}"/>
-                    <sql:param value="${updateDescription}"/>
-                    <sql:param value="${param.date}"/>
-                    <sql:param value="${param.employee}"/>
-                    <sql:param value="${param.task}"/>
-                </sql:update>
-                <c:choose>
-                    <c:when test="${rowsUpdated == 1}">
-                        <sql:update dataSource="jdbc/sarariman" var="rowsInserted">
-                            INSERT INTO hours_changelog (employee, task, date, reason, remote_address, remote_user, duration) values(?, ?, ?, ?, ?, ?, ?)
-                            <sql:param value="${param.employee}"/>
-                            <sql:param value="${param.task}"/>
-                            <sql:param value="${param.date}"/>
-                            <sql:param value="${updateReason}"/>
-                            <sql:param value="${pageContext.request.remoteHost}"/>
-                            <sql:param value="${user.number}"/>
-                            <sql:param value="${updateDuration}"/>
-                        </sql:update>
-                        <c:if test="${rowsInserted != 1}">
-                            <p class="error">There was an error creating the audit log for the modification.</p>
-                        </c:if>
-                    </c:when>
-                    <c:otherwise>
-                        <p class="error">There was an error modifying the entry.</p>
-                    </c:otherwise>
-                </c:choose>
-            </c:if>
         </c:if>
 
         <sql:query dataSource="jdbc/sarariman" var="entries">
@@ -204,8 +174,8 @@
             
             <br/> 
             <input type="hidden" name="date" value="${entry.date}"/>
-            <input type="hidden" name="employee" value="${param.employee}"/>
-            <input type="hidden" name="task" value="${entry.task}"/>
+            <input type="hidden" name="employee" value="25"/>
+            <input type="hidden" name="task" value="18"/>
             
             <div class="sep">
                 <label for="duration">Duration:</label>
@@ -223,8 +193,8 @@
             
             <div class="sep" style="text-align:center;">
             <label for="reason">Reason for Change: </label>
-            <input size="30" type="text" name="reason" id="reason" style="border:1px solid #CCC;"/>
-            <input id="modify" type="submit" name="modifyEntry" value="Modify" style="display:none;"/>
+            <input size="30" type="text" name="reason" id="reason" value="reason for" style="border:1px solid #CCC;"/>
+            <input id="modify" type="submit" name="modifyEntry" value="Modify"/>
             <button id="visible_modify" type="button" enabled="${canModify}" class="button_tg submit">Modify</button>
             </div>
         </form>

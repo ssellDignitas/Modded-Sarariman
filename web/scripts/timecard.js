@@ -16,6 +16,9 @@ var takenValues = new Array( );
 var last_saturday = new Array( 3 );
 var in_current_week = true;
 
+var badrow = false;
+var submitTheSheet = true;
+
 // Date.getDay returns a value 0 - 6 with 0 being Sunday.
 // I need 0 to be Saturday. So increment all by 1 except
 // for Saturday which is set to 0.
@@ -396,6 +399,8 @@ function makeForm( billableElement, durationElement, index )
     var descript    = $( '#description' ).clone( );
     var date        = $( '#date' ).clone( );
     var week        = $( '#week' ).clone( );
+    var remoteUser  = $( '#remote_user_original' ).clone( );
+    var remoteAddr  = $( '#remote_address_original' ).clone( );
 
     // Set proper dates
     week.html( last_saturday[ 0 ] + "-" + ( last_saturday[ 1 ] < 10 ? '0' + last_saturday[ 1 ] : last_saturday[ 1 ] ) + "-" + ( last_saturday[ 2 ] < 10 ? '0' + last_saturday[ 2 ] : last_saturday[ 2 ] ) );
@@ -440,41 +445,132 @@ function makeForm( billableElement, durationElement, index )
     week.removeAttr( 'type' );
     date.removeClass( 'hide_me' );
     billable.removeAttr( 'disabled' );
+    remoteUser.removeAttr( 'id' );
+    remoteAddr.removeAttr( 'id' );
     
+    date.attr( 'id', 'date_' + index );
+    
+    // Generate a unique iframe for this form to submit into
     $( '<iframe>' ).attr(
     {
         id: 'take_the_punch' + index,
         name: 'take_the_punch'  + index
     } ).appendTo( '#formHolder' );
-    
+
+    // Generate the actual form    
     $( '<form>' ).attr(
     {
         id: 'activeForm' + index,
         name: 'activeForm' + index,
-        action: $( '#main_form' ).attr( 'action' ),
-        method: $( '#main_form' ).attr( 'method' ),
+        action: 'timecard',
+        method: 'post',
         target: 'take_the_punch' + index
     } ).appendTo( '#formHolder' );
-    
-    billable.attr( 'name', 'billable_task' );
+   
+    billable.attr( 'name', "billable_task" );
     duration.attr( 'name', 'duration' );
     descript.attr( 'name', 'description' );
     
     billable.val( $( '#' + billableElement ).val( ) );
-
-    $( '#activeForm' + index ).append( date );
-    $( '#activeForm' + index ).append( week );
-    $( '#activeForm' + index ).append( billable );
-    $( '#activeForm' + index ).append( duration );
-    $( '#activeForm' + index ).append( descript );
-    
-    $( '<input>' ).attr(
+  
+    // If we are editing a previous time entry 
+    if( duration.hasClass( "pre_existing" ) )
     {
-        type: 'submit',
-        name: 'recordTime',
-        id: 'activeInput' + index,
-        value: 'Record'
-    } ).appendTo( '#activeForm' + index );
+        // Date
+        $( '<input>' ).attr(
+        {
+            type: 'hidden',
+            name: 'date',
+            id: 'date_' + index,
+            value: date.val( )
+        } ).appendTo( '#activeForm' + index );
+
+        // Employee
+        $( '<input>' ).attr(
+        {
+            type: 'hidden',
+            name: 'employee',
+            value: $( "#employee_param" ).html( ),
+            id: 'employee_' + index
+        } ).appendTo( '#activeForm' + index );
+
+        // Task
+        $( '<input>' ).attr( 
+        {
+            type: 'hidden',
+            name: 'task',
+            value: billable.val( ),
+            id: 'task_' + index
+        } ).appendTo( '#activeForm' + index );
+
+        // Duration and Description
+        duration.attr( "id", "duration_" + index );
+        descript.attr( "id", "descript_" + index );
+
+        $( "#activeForm" + index ).append( duration );
+        $( "#activeForm" + index ).append( descript );
+        $( "#activeForm" + index ).append( remoteUser );
+        $( "#activeForm" + index ).append( remoteAddr );
+
+        // Reason 
+        $( '<input>' ).attr(
+        {
+            type: 'text',
+            name: 'reason', 
+            id: 'reason_' + index,
+            value: ( $( "#modifyField" ).length > 0 ? ( $( "#modifyField" ).hasClass( "hide_me" ) ? "Same week modification" : $( "#modifyArea" ).val( ) ) : "none" )
+        } ).appendTo( '#activeForm' + index );
+
+        // Submission Type
+        $( '<input>' ).attr(
+        {
+            type: 'hidden',
+            name: 'requestType',
+            value: 'modify_entry'
+        } ).appendTo( '#activeForm' + index );
+
+        // Submit button
+        $( '<input>' ).attr( 
+        {
+            type: 'submit',
+            name: 'modifyEntry',
+            id: 'activeInput' + index,
+            value: 'Modify'
+        } ).appendTo( '#activeForm' + index );
+
+    }
+    else // A brand new time entry
+    {    
+        $( '#activeForm' + index ).append( date );
+        $( '#activeForm' + index ).append( week );
+        $( '#activeForm' + index ).append( billable );
+        $( '#activeForm' + index ).append( duration );
+        $( '#activeForm' + index ).append( descript );
+
+        // Employee
+        $( '<input>' ).attr(
+        {
+            type: 'hidden',
+            name: 'employee',
+            value: $( "#employee_param" ).html( ),
+            id: 'employee_' + index
+        } ).appendTo( '#activeForm' + index );
+
+        $( '<input>' ).attr( 
+        {
+            type: 'hidden',
+            name: 'requestType',
+            value: 'new_entry'
+        } ).appendTo( '#activeForm' + index );
+
+        $( '<input>' ).attr(
+        {
+            type: 'submit',
+            name: 'recordTime',
+            id: 'activeInput' + index,
+            value: 'Record'
+        } ).appendTo( '#activeForm' + index );
+    }
 }
 
 //------------------------------------------------------------------------------------------
@@ -523,6 +619,15 @@ $( document ).ready( function( )
 
         for( var i = 0; i < count + 1; i++ )
             if( $( "#billable" + i ).val( ) != "..." ) $( "#billable" + i ).attr( "disabled", "true" );
+
+        if( ( last_saturday[ 0 ] + "-" + ( last_saturday[ 1 ] < 10 ? '0' + last_saturday[ 1 ] : last_saturday[ 1 ] ) + "-" + ( last_saturday[ 2 ] < 10 ? '0' + last_saturday[ 2 ] : last_saturday[ 2 ] ) ) != $( "#true_week" ).html( ) )
+        {
+            if( $( "#modifyField" ).length > 0 )
+            {
+                $( "#saveButton" ).css( "margin-top", "15px" );
+                $( "#modifyField" ).removeClass( "hide_me" );
+            }
+        }
     }
     
     //--------------------------------------------------------------------------------------
@@ -567,6 +672,7 @@ $( document ).ready( function( )
                 
                 $( '#billable' + rowNumber ).val( $( this ).find( '#taskNumba' ).html( ) );
                 $( '#duration_' + dayName + rowNumber ).val( $( this ).find( '#durate' ).html( ) );
+                $( '#duration_' + dayName + rowNumber ).addClass( "pre_existing" );
                 
                 // We want to mark this value as taken so future rows can not use it as their task.
                 // is value is in takenValue? -1 means it is not
@@ -649,7 +755,23 @@ $( document ).ready( function( )
         var billable, duration;
         var cnt = 0;
         var ind = new Array( );
+
+        submitTheSheet = true;
         
+        if( !$( "#modifyField" ).hasClass( "hide_me" ) )
+        {
+            if( $( "#modifyArea" ).val( ).length == 0 )
+            {
+                $( "#modifyField" ).css( "background-color", "#D97D71" );
+                setTimeout( function( ){ $( "#modifyField" ).css( "background-color", "#D9B6AF" ); setTimeout( function( ){ $( "#modifyField" ).css( "background-color", "#FFFFFF" ); }, 100 ); }, 100 );
+
+                submitTheSheet = false;
+                return;
+            }
+        }
+
+        badrow = false;
+
         $( '.duration_input' ).each( function( index )
         {
             if( $( this ).attr( 'id' ).length > 12 )
@@ -666,20 +788,37 @@ $( document ).ready( function( )
                         ind[ cnt ] = index;
                         cnt++;
                     }
+                    else
+                    { 
+                        billable.css( "background-color", "#D97D71" );
+                        setTimeout( function( ){ billable.css( "background-color", "#D9B6AF" ); setTimeout( function( ){ billable.css( "background-color", "#FFFFFF" ); }, 100 ); }, 100 );
+                        badrow = true;
+                        return;
+                    }
                 }
             }
         } );
 
+        if( badrow )
+        {
+            submitTheSheet = false;
+            return;
+        }
+
         for( var i = 0; i < cnt; i++ )
             $( "#activeInput" + ind[ i ] ).trigger( 'click' );
 
-        setTimeout( function( ){ $( "#refresh_week" ).trigger( 'click' ); }, 1000 );
+        setTimeout( function( ){ $( "#refresh_week" ).trigger( 'click' ); }, 1500 );
+
+        submitTheSheet = true;
     } );
     
     $( '#submitButton' ).bind( 'click', function( )
     {
-        $( '#saveButton' ).trigger( 'click' );
-        $( '#submitReal' ).trigger( 'click' );
+        $( '#saveButton' ).trigger( 'click' )
+
+        if( submitTheSheet )
+            $( '#submitReal' ).trigger( 'click' );
     } );
     
     $( '#retractButton' ).bind( 'click', function( )
