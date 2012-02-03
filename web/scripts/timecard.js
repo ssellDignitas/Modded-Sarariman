@@ -91,7 +91,48 @@ function setVisibleWeek( )
     if( dd < 10 )
         dd = '0' + dd;
 
-    $( "#visible_week" ).html( mm + " " + dd + ", " + yy );
+    var startingDate = ( mm + " " + dd );
+
+    //------------------------------------------------
+
+    dd = last_saturday[ 2 ] + 6;
+
+    mm = last_saturday[ 1 ];
+
+    if( dd > 31 && ( mm == 1 || mm == 3 || mm == 5 || mm == 7 || mm == 8 || mm == 10 || mm == 12 ) )
+    {
+        dd = dd - 31;
+        mm = mm == 12 ? 1 : mm + 1;
+        yy = mm == 1 ? yy + 1 : yy;
+    }
+    else if( dd > 30 && ( mm == 4 || mm == 6 || mm == 9 || mm == 11 ) )
+    {
+        dd = dd - 30;
+        mm = mm + 1;
+    }
+    else if( dd > 28 && mm == 2 )
+    {
+        if( yy % 4 == 0 )
+        {
+            // Leap year
+            if( dd > 29 )
+            {
+                dd = dd - 29;
+                mm = mm + 1;
+            }
+        }
+        else
+        {
+            dd = dd - 28;
+            mm = mm + 1;
+        }
+    }
+
+    mm = monthStr[ mm - 1 ];
+
+    dd = dd < 10 ? '0' + dd : dd;
+
+    $( "#visible_week" ).html( startingDate + " – " + mm + " " + dd + ", " + yy );
 }
 
 // Checks if the current Timecard displayed is for the current week
@@ -287,10 +328,10 @@ function calcTotals_ColInd( rowNumber )
 
 function setHeaders( )
 {
-    $( '#TimeGrid' ).find( 'thead' ).find( 'tr' ).children( ).each( function( index )
+    $( '#TimeGrid' ).find( 'thead' ).children( ).each( function( index )
     {
-        // index - 1 to account for 'Task Name' being counted
-        if( ( index - 1 ) == day && in_current_week )
+        // index - 2 to account for 'Task Name' and the add/remove buttons being counted
+        if( ( index - 2 ) == day && in_current_week )
             $( this ).addClass( 'alternate_header' );
         else
             $( this ).addClass( 'standard_header' );
@@ -340,6 +381,12 @@ function addRow( )
         calcTotals_Row( -1 );
         calcTotals_Col( -1 );
     } );
+
+    if( in_current_week )
+    {
+        $( "#" + days[ day ] + "_totals" ).addClass( "alt_total" );
+        $( "td[id^='task_" + days[ day ].toLowerCase( ) + "']" ).each( function( ){ if( !$( this ).hasClass( "active_day" ) ) $( this ).addClass( "active_day" ); } );
+    }
 
     updateRowAddRemove( );
 }
@@ -598,7 +645,7 @@ $( document ).ready( function( )
     if( $( '#TimeGrid' ).length > 0 )
     {
         //First set the appropriate header styles
-//        setHeaders( );
+        setHeaders( );
         
         //If there is data already, fill out the grid
         fillGrid( );

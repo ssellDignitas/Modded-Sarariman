@@ -5,7 +5,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
-<%@ page import="com.dignitastechnologies.sarariman.qb.EntryWriter"%>
+<%@ page import="com.dignitastechnologies.sarariman.EntryWriter"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="employeeNumber" value="${user.number}"/>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -19,7 +19,6 @@
 
     <!-- Styles -->
     <link type="text/css" rel="stylesheet" href="styles/site.css" />
-    <link type="text/css" rel="stylesheet" href="http://static.flowplayer.org/tools/css/overlay-apple.css"/>
 
     <style type="text/css">
     .hide_me
@@ -174,7 +173,7 @@
         padding: 5px;
     }
 
-    #prevWeekButton:hover, #nextWeekButton:hover, #todayButton:hover, #saveButton:hover, #submitButton:hover, #retractButton:hover, #approvedButton:hover, .duration_input:hover
+    #prevWeekButton:hover, #nextWeekButton:hover, #todayButton:hover, #saveButton:hover, #submitButton:hover, #retractButton:hover, #approvedButton:hover, duration_input:hover
     {
         background-color:#C6CACC;
         cursor:pointer;
@@ -182,8 +181,10 @@
 
     .duration_input
     {
+        background-color: transparent;
         text-align:center;
         border:0px;
+        height:100%;
     }
 
     .task_input
@@ -195,9 +196,13 @@
     {
         width:10%;
         max-width:10%;
-        border-bottom:1px dashed #EEEEEE;
+        border-bottom:1px dashed #DDDDDD;
+        border-right:1px dashed #DDDDDD;
         padding-top:10px;
         padding-bottom:10px;
+    }
+
+    .active_day, .alternate_header, .alt_total
     }
     </style>
 
@@ -300,13 +305,17 @@
 
             <div id="date_display">
                 <fmt:formatDate var="thisWeekStart" value="${week}" type="date" pattern="yyyy-MM-dd" /><fmt:formatDate var="actualWeek" value="${du:weekStart(du:now())}" type="date" pattern="yyyy-MM-dd"/>
-                <div style="padding:0;margin:0;position:relative;top:25%;"><span id="true_week" class="hide_me">${actualWeek}</span><span id="week_start" class="hide_me">${thisWeekStart}</span><span id="visible_week"></span></div>
+                <div style="padding:0;margin:0;position:relative;top:25%;">
+                    <span id="true_week" class="hide_me">${actualWeek}</span>
+                    <span id="week_start" class="hide_me">${thisWeekStart}</span>
+                    <span id="visible_week"></span>
+                </div>
             </div>
  
             <!-- MAIN GRID --> 
             <div id="grid">
 
-                <!-- BEGIN MAGIC -->
+                <!-- BEGIN variable/clone setting  -->
 
                <textarea cols="80" rows="10" name="description" id="description" class="hide_me" style="margin-top:5px;border:1px solid #CCC;width:80%;">I did work today!</textarea>
                <form action="${request.requestURI}" method="post" id='copy_form' target="take_the_punch"></form>
@@ -325,19 +334,19 @@
                    </c:forEach>
                 </select>
 
-                <!-- END MAGIC -->
+                <!-- END variable/clone setting -->
 
                 <table id="TimeGrid" border="0" cellspacing="0" style="margin:0;padding:0;width:100%;">
                     <thead style="font-size:18px;font-weight:normal;">
                         <th style="width:5%;max-width:5%;"></th>
                         <th style="width:15%;max-width:15%;padding-bottom:20px;">Task</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">S</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">S</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">M</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">T</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">W</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">T</th>
-                        <th style="width:10%;max-width:10%;padding-bottom:20px;">F</th>
+                        <th id="Header_Sat" style="width:10%;max-width:10%;padding-bottom:20px;">S</th>
+                        <th id="Header_Sun" style="width:10%;max-width:10%;padding-bottom:20px;">S</th>
+                        <th id="Header_Mon" style="width:10%;max-width:10%;padding-bottom:20px;">M</th>
+                        <th id="Header_Tue" style="width:10%;max-width:10%;padding-bottom:20px;">T</th>
+                        <th id="Header_Wed" style="width:10%;max-width:10%;padding-bottom:20px;">W</th>
+                        <th id="Header_Thu" style="width:10%;max-width:10%;padding-bottom:20px;">T</th>
+                        <th id="Header_Fri" style="width:10%;max-width:10%;padding-bottom:20px;">F</th>
                         <th style="width:10%;max-width:10%;padding-bottom:20px;"></th>
                     </thead>
 
@@ -433,40 +442,6 @@
         </div> <!-- End HOLDER -->
 
     </div>
-
-<form id="submit_edit_sheet" method="post">
-
-            <br/>
-            <input type="hidden" name="date" value="2012-01-22"/>
-            <input type="hidden" name="employee" value="25"/>
-            <input type="hidden" name="task" value="18"/>
-
-            <div class="sep">
-                <label for="duration">Duration:</label>
-                <input size="5" type="text" name="duration" id="duration" value="8.00" style="border:1px solid #CCC;"/>
-            </div>
-
-            <br/>
-
-            <div class="sep">
-                <label for="description">Description of Time Worked (optional): </label><br/>
-                <textarea cols="48" rows="10" name="description" id="description" style="border:1px solid #CCC;width:98%;">did work</textarea><br/>
-            </div>
-
-            <br/>
-
-            <div class="sep" style="text-align:center;">
-            <label for="reason">Reason for Change: </label>
-            <input size="30" type="text" name="reason" id="reason" value="reason for" style="border:1px solid #CCC;"/>
-            <input id="modify" type="submit" name="modifyEntry" value="Modify"/>
-            </div>
-        </form>
-
-
-
-
-
-
 
         <!-- ########################################################################### -->
 
