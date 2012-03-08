@@ -14,8 +14,7 @@ import java.util.Map;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.naming.*;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
@@ -170,7 +169,10 @@ public class LDAPDirectory implements Directory {
 
                 String name = sn + ", " + attributes.get("givenName").getAll().next();
                 String uid = attributes.get("uid").getAll().next().toString();
-                String mail = attributes.get("mail").getAll().next().toString();
+                
+                // Odd LDAP null pointer...
+                javax.naming.directory.Attribute temp = attributes.get( "mail" );
+                String mail = temp == null ? "null_exception" : temp.getAll().next().toString();
                 //boolean fulltime = Boolean.parseBoolean(attributes.get("fulltime").getAll().next().toString());
                 //boolean active = Boolean.parseBoolean(attributes.get("active").getAll().next().toString());
                 
