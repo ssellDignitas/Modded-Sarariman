@@ -1,0 +1,215 @@
+body 
+{
+    margin:50px 0px; 
+    margin-top:0px;
+    padding:0px;
+    font: normal 12px/1.5em "Lucida Grande", "Verdana", sans-serif;
+    background: #FDFFFE;
+    color: #0f0f10;
+}
+
+.list_pad
+{
+    padding-left:10px;
+}
+
+.button
+{
+    padding: 6px;
+
+    border-radius: 3px;
+    border: 1px solid #DDDDDD;
+
+    background-color: #FFFFFF;
+
+    color: #333333;
+    font-size: 16px;
+}
+
+/* ------------------------ Text Styling ------------------------------------------------ */
+
+h1{
+    font:3.5em Georgia,sans-serif;
+    color: #2A2C2B;
+
+    text-shadow:
+        -2px -2px 0 #F9F9F9,
+        2px -2px 0 #FAFAFA,
+        -2px 2px 0 #FAFAFA,
+        2px 2px 0 #F9F9F9;
+}
+
+h2{
+    font:1.5em Georgia,sans-serif;
+    color: #000;
+
+    text-shadow:
+        -1px -1px 0 #F9F9F9,
+        1px -1px 0 #FAFAFA,
+        -1px 1px 0 #FAFAFA,
+        1px 1px 0 #F9F9F9;
+
+    padding-left: 30px;
+}
+
+p
+{    
+    font: normal 15px "Lucida Grande", "Verdana", sans-serif;
+
+    padding-left:10px;
+    padding-right:10px;
+    padding-bottom:10px;
+}
+
+p.big
+{
+    font: normal 18px "Lucida Grande", "Verdana", sans-serif;
+}
+
+p.small
+{
+    font: normal 12px, "Lucida Grande", "Verdana", sans-serif;
+    color: #808080;
+}
+
+a {}
+a{
+    text-align: left;
+    color: #6ebae2;	
+    text-decoration:none;
+}
+
+a:hover {
+    text-align: left;
+    color: #C8C8C8;
+}
+
+a:visited{
+    text-align: left;
+    color: #6ebae2;
+}
+
+/* ------------------------ Sticky Footer --------------------------------------------------- */
+
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -4em;
+}
+.footer_stick, .push {
+    height: 4em;
+}
+
+/* ------------------------ BODY -------------------------------------------------------- */
+
+#body
+{    
+    width: 100%;
+    min-height: 600px;
+    height: auto;
+
+    margin: 0 auto;
+
+    background: #FBFBFB;
+
+    font-size: 100%;
+    color: #1E1E20;
+
+    top: 0px;
+    right: 50%;
+
+    overflow:auto; 
+
+    border: 3px solid #FFF;
+}
+
+/* ------------------------ FOOTER ------------------------------------------------------ */
+
+#footer
+{
+    font-size: 90%;
+    color: #2A2C2B;
+
+    width: 100%;
+    height: 30px;
+    margin:0px auto;
+
+    bottom: 0px;
+}
+
+/* ------------------------ HEADER ------------------------------------------------------ */
+
+#header {
+    font:1.5em Georgia,sans-serif;
+    padding-top: 0px;
+    color: #FFF;
+    background: #FFF;
+}
+
+/* ------------------------ SHADOW ------------------------------------------------------- */
+
+.drop-shadow {
+
+    padding:1em; 
+    position:relative;
+    float:left;
+    width:95%;
+    margin:2em 20px 4em;
+
+    overflow:auto;
+
+    -webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow:0 1px 2px rgba(0, 0, 0, 0.3);
+
+    background:#FEFEFE;
+
+    border: 3px solid #FFF;
+}
+
+.drop-shadow_indexSpecial
+{
+    position:relative;
+    float:left;
+    width:40%; 
+
+    overflow:auto;
+
+    padding:1.5em; 
+    margin:2em 4.25em 4em; 
+    background:#FEFEFE;
+    -webkit-box-shadow:0 1px 2px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow:0 1px 2px rgba(0, 0, 0, 0.3);
+    box-shadow:0 1px 2px rgba(0, 0, 0, 0.3);
+
+    border: 3px solid #FFF;
+}
+
+/* Curved shadows */
+
+
+/*-------------- Misc ---------------------------------------------------------------- */
+
+.message
+{
+    padding-left:150px;
+}
+
+#holder
+{
+
+    height: auto;
+    width: 90%;
+    margin:0px auto;
+
+    overflow:auto;
+
+    margin:auto;
+}

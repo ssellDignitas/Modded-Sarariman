@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<QBWCXML>
+    <AppName>Sarariman</AppName>
+    <AppDisplayName>Sarariman</AppDisplayName>
+    <AppID></AppID>
+    <AppURL>http://mindbender/QB/index.php</AppURL>
+    <AppDescription>Connection to the Sarariman Time-Tracking Service</AppDescription>
+    <AppSupport>mindbender/QB/support.html</AppSupport>
+    <UserName>quickbooks</UserName>
+    <OwnerID>{A91CC425-ABC4-4972-9FC6-D5F6B80F0989}</OwnerID>
+    <FileID>{349C0857-7B5D-428c-B0B9-E0AC9377E989}</FileID>
+    <QBType>QBFS</QBType>
+    <Style>DocWrapped</Style>
+</QBWCXML>

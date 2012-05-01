@@ -1,0 +1,116 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+            <title>Sarariman : Time Tracking Service</title>
+
+            <!-- Scripts -->
+            <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+            <script type="text/javascript" src="http://cdn.jquerytools.org/1.2.5/jquery.tools.min.js"></script>
+            <script type="text/javascript" src="scripts/main_nav.js"></script> 
+            <script type="text/javascript" src="scripts/jQ_tabs.js"></script>
+            <script type="text/javascript" src="scripts/jFormer.js"></script>
+
+            <!-- Styles -->
+            <link type="text/css" rel="stylesheet" href="styles/general.css" />
+            <link type="text/css" rel="stylesheet" href="styles/jformer.css" />
+    </head>
+    
+    <body>
+        
+        <?php
+                
+                    require_once('php/jformer.php');
+     
+    //------------------------------------------------------------------------------------------
+    // Create a new JFormer Form
+     
+    $timeForm = new JFormer( 'timeForm', array(
+            'submitTimeButton' => 'Submit Time',
+            'style' => 'width: 650px;',
+            'title' => '<h2>TimeSheet Form</h2>',
+            'description' => '<p class="small">Fill out all mandatory fields and submit your TimeSheet every day.</p>'
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Create the left-hand-side
+     
+    $chargeHoursSection = new JFormSection( $timeForm->id.'ChargeHours', array(
+            'title' => '<p class="big">Time Details</p>',
+            'instanceOptions' => array(
+                    'max' => 256,
+                    'addChargeButtonText' => 'Add New Charge',
+                    'removeChargeButtonText' => 'Remove Charge',
+            )
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Create the right-hand-side
+     
+    $descriptionSection = JFormSection( $timeForm->id.'Description', array(
+            'title' => '<p class="big">Description</p>'
+            )
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Add components to LHS
+     
+    $chargeHoursSection->addJFormComponentArray( array(
+     
+            new JFormComponentDropDown( 'chargeNumber', 'Charge:',
+                    array(
+     
+                            array(
+                                    'value' => ' ',
+                                    'label' => ' - Select a Charge - ',
+                                    'disabled' => true,
+                                    'selected' => true
+                            ),
+     
+                            array(
+                                    'value' => 'option1',
+                                    'label' => 'Option 1'
+                            ),
+                    ),
+     
+                    array(
+                            'tip' => '<p class="small">Select a charge number. Additional charges may be added.</p>',
+                    ),
+     
+                    'validationOptions' => array( 'required' ),
+            ),
+     
+            new JFormComponentSingleLineText( 'hours', 'Hour Count:', array(
+                    'width' => 'long',
+                    'validationOptions' => array( 'required' ),
+            ) ),
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Add components to RHS
+     
+    $descriptionSection->addJFormComponentArray( array(
+     
+            new JFormComponentTextArea( 'description', 'Description of Time Worked:', array(
+                    'width' => 'longest',
+                    'height' => 'medium',
+                    'validationOptions' => array( 'required' ),
+            ) ),
+            ) );
+     
+    //------------------------------------------------------------------------------------------
+    // Add the sections to the page
+     
+    $timeForm->addJFormSection( $chargeHoursSection );
+    $timeForm->addJFormSection( $descriptionSection );
+     
+    $timeForm->processRequest( );
+
+    ?>
+        
+    </body>
+</html>

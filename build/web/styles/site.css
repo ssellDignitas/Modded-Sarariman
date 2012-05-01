@@ -1,0 +1,15 @@
+body
+{
+    margin:50px 0px;
+    margin-top:0px;
+    padding:0px;
+    font: normal 12px/1.5em "Lucida Grande", "Verdana", sans-serif;
+    background: #F8FCFF;
+    color: #0f0f10;
+}
+
+a
+{
+    text-decoration: none;
+}
+

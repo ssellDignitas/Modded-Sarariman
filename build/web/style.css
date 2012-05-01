@@ -1,0 +1,67 @@
+/*
+Copyright (C) 2009-2010 StackFrame, LLC
+This code is licensed under GPLv2.
+*/
+
+body {
+    margin: 0px auto;
+    padding: 15px;
+    background: white;
+    color: black;
+}
+
+.error {
+    color: red;
+}
+
+#footer {
+    text-align: center;
+}
+
+.duration, .task, .currency, .line_item, .percentage {
+    text-align: right;
+    font-family: monospace;
+}
+
+.checkbox {
+    text-align: center;
+}
+
+.date {
+    white-space: nowrap;
+}
+
+th {
+    white-space: nowrap;
+}
+
+table.altrows {
+    font-family: verdana,arial,sans-serif;
+    font-size:11px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #a9c6c9;
+    border-collapse: collapse;
+}
+
+table.altrows th {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #a9c6c9;
+}
+
+table.altrows td {
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #a9c6c9;
+}
+
+.oddrow {
+    background-color: #d4e3e5;
+}
+
+.evenrow {
+    background-color: #c3dde0;
+}
