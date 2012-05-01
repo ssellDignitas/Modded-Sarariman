@@ -5,6 +5,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="du" uri="/WEB-INF/tlds/DateUtils" %>
 <%@taglib prefix="sarariman" uri="/WEB-INF/tlds/sarariman" %>
+<%@taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
 <%@ page import="com.dignitastechnologies.sarariman.EntryWriter"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <c:set var="employeeNumber" value="${user.number}"/>
@@ -77,7 +78,14 @@
 
         .more_display
         {
-            background-color: #00FF00;
+            border: 1px solid #FFFFFF;
+            background-color: #FFFFFF;
+            border-radius:3px;
+
+            width:100%;
+            margin: 0 auto;
+            margin-top:-9px;
+            margin-bottom:10px;
         }
 
     </style>
@@ -131,8 +139,17 @@
                         <td class="spacer"></td>
                     </tr>
                     <tr>
-                        <td colspan="100%" id="${employee.number}_more" class="hide_me more_display">
-                            more information...
+                        <td colspan="100%" id="${employee.number}_more" class="hide_me">
+                            <table border="0" cellspacing="0" class="more_display">
+                                <tbody>
+                                    <tr>
+                                        <b>Employee Email Address:</b> {employee.email}
+                                    </tr>
+                                    <tr>
+                                        <b>Employee Birthdate:</b><joda:format value="${directory.byNumber[employee.number].birthdate}" style="L-"/> (${directory.byNumber[employee.number].age})
+                                    </tr>
+                                </tbody>
+                            </table>
                         </td>
                     </tr>
                 </c:forEach>

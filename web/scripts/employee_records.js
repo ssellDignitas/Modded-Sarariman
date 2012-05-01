@@ -104,6 +104,11 @@ function other_bindings( )
     {
         var emp = $( this ).parent( ).attr( "id" );
         $( "#" + emp + "_more" ).toggle( );
+
+        if( $( this ).html( ) == "more" )
+            $( this ).html( "less" );
+        else
+            $( this ).html( "more" );
     } );
 }
 
